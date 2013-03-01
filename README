@@ -21,9 +21,9 @@ ARGUMENTS
 
 SETUP
         Accepts:
-        - No arguments, on which dst_root and src_root settings must be set
-        - One argument, on which dst_root setting must be set
-        - Two arguments, on which no path settings need to be set
+        - No arguments; dst_root and src_root settings must be set
+        - One argument; dst_root setting must be set
+        - Two arguments; no path settings need to be set
 
         - Change dst_root
         - Change src_root if your manpage dirs are somewhere else than 
