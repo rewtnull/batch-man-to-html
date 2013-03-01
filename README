@@ -11,6 +11,11 @@ DESCRIPTION
         Batch unpack and convert manpages to html from source manpage
         directory to a destination directory.
 
+        It is designed with the ability to be automated, either running it
+        with or without command line arguments. Since it checks if the
+        destination file exists, new manpages can be accumulated by by re-
+        running the script with the same arguments or path settings.
+
 ARGUMENTS
         -h, --help        Display help
 
@@ -55,17 +60,22 @@ DEPENDENCIES
         conditions aren't met.
 
 HISTORY
- v0.1 (20130224) - Initial release
- v0.2 (20130225) - Fixed bug where destination path would break if ${src_root}
-                   was changed
-                 - Separated ${html_type} and ${comp_type}. For now, comp_type
-                   shouldn't be touched since the script relies on bzcat to
-                   explicitly unpack bz2 compressed manpages
- v0.3 (20130302) - Added arguments support
-                 - Code cleanup/partial rewrite
-                 - Fixed bug in bzcat syntax which generated the same file
-                   multiple times
-                 - Added to github
+        v0.1 (20130224) - Initial release
+        v0.2 (20130225) - Fixed bug where destination path would break if
+                          ${src_root} was changed
+                        - Separated ${html_type} and ${comp_type}. For now,
+                          comp_type shouldn't be touched since the script
+                          relies on bzcat to explicitly unpack bz2 compressed
+                          manpages
+        v0.3 (20130302) - Added arguments support
+                        - Code cleanup/partial rewrite
+                        - Fixed bug in bzcat syntax which generated the same
+                          file multiple times
+                        - Added to github
+
+TODO
+        - Ability to update destination html's with newer versions/revisions
+        - Toggle ability to skip/generate stub manpages
 
 OTHER
         Change 'exec' on the final line to 'echo' to try the script without
