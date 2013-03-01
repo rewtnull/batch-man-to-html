@@ -1,0 +1,69 @@
+NAME
+        bm2h - Batch man to html
+
+VERSION
+        0.3
+
+SYNOPSIS
+        bm2h.sh [--help|-h] [--version|-v] [source] [ [source] [destination] ]
+
+DESCRIPTION
+        Batch unpack and convert manpages to html from source manpage
+        directory to a destination directory.
+
+ARGUMENTS
+        -h, --help        Display help
+
+        -v, --version     Display version
+
+        No arguments, source directory, or source and destination directory
+        accepted.
+
+SETUP
+        Accepts:
+        - No arguments, on which dst_root and src_root settings must be set
+        - One argument, on which dst_root setting must be set
+        - Two arguments, on which no path settings need to be set
+
+        - Change dst_root
+        - Change src_root if your manpage dirs are somewhere else than /usr/share/man
+        - Optionally set m2h_arg
+        - Optionally set html_type
+
+AUTHOR
+        Written by Marcus Hoffren
+
+REPORTING BUGS
+        Report bm2h.sh bugs to marcus.hoffren@gmail.com
+        Updates to bm2h.sh and other projects of mine can be found at
+        https://github.com/rewtnull?tab=repositories
+
+COPYRIGHT
+        Copyright © 2013 Marcus Hoffren. License GPLv3+:
+        GNU GPL version 3 or later - http://gnu.org/licenses/gpl.html
+
+        This is free software: you are free to change and redistribute it.
+        There is NO WARRANTY, to the extent permitted by law.
+
+DEPENDENCIES
+        - Fairly recent version of Bash. Tested on v4.1 only
+        - bzcat, which is a part of the bzip2 package
+        - man2html
+
+        bm2h.sh has a built in sanity check and will exit if any of these
+        conditions aren't met.
+
+HISTORY
+ v0.1 (20130224) - Initial release
+ v0.2 (20130225) - Fixed bug where destination path would break if ${src_root} was changed
+                 - Separated ${html_type} and ${comp_type}. For now, comp_type shouldn't be
+                   touched since the script relies on bzcat to explicitly unpack bz2 compressed
+                   manpages
+ v0.3 (20130302) - Added arguments support
+                 - Code cleanup/partial rewrite
+                 - Fixed bug in bzcat syntax which generated the same file multiple times
+                 - Added to github
+
+OTHER
+        Change 'exec' on the final line to 'echo' to try the script without
+        launching a window manager.
