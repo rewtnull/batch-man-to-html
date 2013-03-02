@@ -13,7 +13,7 @@ DESCRIPTION
 
         It is designed to automate conversion, either by running it with or
         without command line arguments. Since it checks if the destination
-        file exists, new manpages can be accumulated by by re-running the
+        files exist, new manpages can be accumulated by by re-running the
         script with the same arguments or path settings.
 
 ARGUMENTS
