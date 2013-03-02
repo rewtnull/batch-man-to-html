@@ -77,3 +77,4 @@ TODO
         - Ability to update destination html's with newer versions/revisions
         - Toggle ability to skip/generate stub manpages
         - Ability to change compression type
+        - Non-verbose (silent) mode toggle
