@@ -25,6 +25,8 @@ ARGUMENTS
         accepted.
 
 SETUP
+        bm2h.conf is to be kept in the same directory as bm2h.sh.
+
         Accepts:
         - No arguments; dst_root and src_root settings must be set
         - One argument; dst_root setting must be set
