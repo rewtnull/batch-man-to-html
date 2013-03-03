@@ -74,6 +74,8 @@ HISTORY
                         - Fixed bug in bzcat syntax which generated the same
                           file multiple times
                         - Added to github
+        v0.4 (20130000) - Added a couple of more checks
+                        - More code cleanup
 
 TODO
         - Ability to update destination html's with newer versions/revisions

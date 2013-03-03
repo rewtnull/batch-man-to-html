@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Batch unpack and convert manpages to html from source manpage directory to a destination directory
+# Batch convert manpages to html from source manpage directory to a destination directory
 #
 # Copyright (C) 2013 Marcus Hoffren <marcus.hoffren@gmail.com>.
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
@@ -17,10 +17,15 @@ authnick="dMG/Up Rough"
 scrcontact="marcus.hoffren@gmail.com"
 
 usage() {
-    echo "Usage: ${0##*/} [--help|-h] [--version|-v] [source] [ [source] [destination] ]"
+    echo "Usage: ${0##*/} [--help|-h] [--version|-v] [OPTIONS] [source] [[source] [destination]]"
     echo ""
-    echo "-h, --help        Display this help and exit."
-    echo "-v, --version     Display version and exit."
+    echo "-h, --help            Display this help and exit"
+    echo "-V, --version         Display version and exit"
+    echo ""
+    echo "OPTIONS:"
+    echo ""
+    echo "-v, --verbose         Verbose mode"
+    echo "-s, --generate-stub   Generate stubs"
     echo ""
     echo "No arguments, source directory, or source and destination directory accepted."
     echo ""
@@ -40,84 +45,74 @@ version() {
 # Void
 sanity() {
     [[ "${BASH_VERSION}" < 4.1 ]] && { echo -e "${scrname} requires \033[1mbash v4.1 or newer\033[m."; exit 1; }
+    [[ $(type -p getopt) == "" ]] && { echo -e "GNU getopt \033[1mrequired.\033[m"; exit 1; }
     [[ $(type -p bzcat) == "" ]] && { echo -e "bzcat (bzip2) \033[1mrequired.\033[m"; exit 1; }
     [[ $(type -p man2html) == "" ]] && { echo -e "man2html \033[1mrequired.\033[m"; exit 1; }
     [[ ! -d ${src_root} ]] && { echo -e "${src_root} - Directory \033[1mdoes not exist\033[m."; exit 1; }
-    [[ ! -d "${dst_root}" ]] && mkdir "${dst_root}" 2>/dev/null
-}
-
-# Accept void. Return $src_dirs, $dst_dirs
-arg_null() {
-    src_dirs=( $(echo "${src_root}${man_dirs}") )
-    dst_dirs=( $(echo "${dst_root}") )
-}
-
-# Accept $1. Return $src_dirs, $dst_dirs
-arg_one() {
-    if [[ -d "${1}" ]]; then
-	src_dirs=( $(echo "${1%/}${man_dirs}") ) # Strip trailing /
-	if [[ ! -d ${src_dirs} ]]; then
-	    echo "No man dirs found under ${src_dirs}."
-	    exit 1
-	fi
-    else
-	echo "${1%/} - Directory does not exist."
-	exit 1
+    if [[ ! -d "${dst_root}" ]]; then
+	echo "${dst_root%/} - Destination directory does not exist."
+	read -p "Do you want it to be created? [y/N]"
+	[[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
     fi
-    dst_dirs=( $(echo "${dst_root}") )
 }
 
-# Accept $1, $2. Return $src_dirs, $dst_dirs
-arg_two() {
-    if [[ -d "${1}" ]]; then
-	src_dirs=( $(echo "${1%/}${man_dirs}") )
-	if [[ ! -d ${src_dirs} ]]; then
-	    echo "No man dirs found under ${src_dirs}."
-	    exit 1
-	fi
-	if [[ -d "${2}" ]]; then
-	    dst_dirs=( $(echo "${2%/}") )
-	else
-	    echo "${2%/} - Destination directory does not exist."
-	    read -p "Do you want it to be created? [y/N]"
-	    [[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
-	    dst_dirs=( $(echo "${2%/}") )
-	fi
-    else
-	echo "${1%/} - Source directory does not exist."
-	exit 1
-    fi
-
-}
-
-# Accept any. Return void
 args() {
+    getopt_arg=$(getopt -n "${0##*/}" -o "Vhsv" -l "version,help,generate-stub,verbose" -- "${@}") || { usage; exit 1; }
+    echo $getopt_arg
+    eval set -- "${getopt_arg}"
+    echo $@
+    while (( ${#} > 0 )); do
+	case ${1} in
+	    -V|--version)
+				{ version; exit 0; };;
+	    -h|--help)
+				{ usage; exit 0; };;
+	    -s|--generate-stub)
+				gen_stub="1"
+				echo "STUB";;
+	    -v|--verbose)
+				verbose="1"
+				echo "VERBOSE";;
+	    --)
+				shift
+				break;;
+	    *)
+				{ usage; exit 1; };;
+	esac
+	shift
+    done
+}
+
+num_args() {
     case ${#} in
 	0)
-	    arg_null;;
+	    echo "zero"
+	    src_dirs=( $(echo "${src_root}${man_dirs}") )
+	    dst_dirs=( $(echo "${dst_root}") );;
 	1)
-	    case ${1} in
-		--version|-v)
-		    version
-		    exit 0;;
-		--help|-h)
-		    usage
-		    exit 0;;
-		*)
-		    arg_one "${1}"
-	    esac;;
+	    echo "one"
+	    src_dirs=( $(echo "${1%/}${man_dirs}") ) # Strip trailing /
+	    [[ ! -d ${src_dirs} ]] && { echo "No man dirs found under ${src_dirs}"; exit 1; }
+	    dst_dirs=( $(echo "${dst_root}") );;
 	2)
-	    arg_two "${1}" "${2}";;
+	    echo "two"
+	    src_dirs=( $(echo "${1%/}${man_dirs}") )
+	    dst_dirs=( $(echo "${2%/}") );;
+#	    if [[ ! -d ${dst_dirs} ]]; then
+#		echo "${2%/} - Destination directory does not exist."
+#		read -p "Do you want it to be created? [y/N]"
+#		[[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
+#	    fi;;
 	*)
-	    echo "Wrong number of arguments."
-	    exit 1;;
+	    echo "${0##*/} - Wrong number of arguments."
+	    { usage; exit 1; };;
     esac
 }
 
 # Accept $src_dirs, $dst_dirs. Return void
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] && $(mkdir "${dst_dirs}/${src_dirs[$i]##*/}") # Make dirs
+	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
     done
 }
 
@@ -135,7 +130,7 @@ convert() {
 	    if [[ ! -f "${dst_files}" ]]; then
 		if [[ ! $(bzcat "${src_files[$i]}") =~ ^.so ]]; then # Skip stub manpages
 		    echo -e "Converting ${src_files[$i]} to ${dst_files}"
-		    bzcat "${src_files[$i]}" | man2html ${m2h_arg} > "${dst_files}"
+#		    bzcat "${src_files[$i]}" | man2html ${m2h_arg} > "${dst_files}"
 		else
 		    echo -e "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
 		fi
@@ -150,6 +145,15 @@ convert() {
 
 sanity
 args "${@}"
-make_dirs "${src_dirs}" "${dst_dirs}"
-files_array "${src_dirs}"
-convert "${src_files}"
+echo "1: $1 2: $2 3: $3 4: $4 5: $5"
+num_args "${@}"
+echo "src 1: $src_dirs"
+echo "dst 1: $dst_dirs"
+[[ ! -d ${src_dirs} ]] && { echo "${src_dirs} - Source directory does not exist."; }
+[[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs} - Destination directory does not exist."; exit 1; }
+
+
+#args "${@}"
+#make_dirs "${src_dirs}" "${dst_dirs}"
+#files_array "${src_dirs}"
+#convert "${src_files}"
