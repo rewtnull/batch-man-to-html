@@ -50,17 +50,19 @@ sanity() {
     [[ $(type -p man2html) == "" ]] && { echo -e "man2html \033[1mrequired.\033[m"; exit 1; }
     [[ ! -d ${src_root} ]] && { echo -e "${src_root} - Directory \033[1mdoes not exist\033[m."; exit 1; }
     if [[ ! -d "${dst_root}" ]]; then
-	echo "${dst_root%/} - Destination directory does not exist."
-	read -p "Do you want it to be created? [y/N]"
-	[[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
+	if (( ${#} == 0 )); then
+	    echo "${dst_root%/} - Destination directory does not exist."
+	    read -p "Do you want it to be created? [y/N]"
+	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
+	fi
     fi
 }
 
 args() {
     getopt_arg=$(getopt -n "${0##*/}" -o "Vhsv" -l "version,help,generate-stub,verbose" -- "${@}") || { usage; exit 1; }
-    echo $getopt_arg
-    eval set -- "${getopt_arg}"
-    echo $@
+    echo "getopt_arg: $getopt_arg"
+    set -- ${getopt_arg}
+    echo "\$@: $@"
     while (( ${#} > 0 )); do
 	case ${1} in
 	    -V|--version)
@@ -74,6 +76,7 @@ args() {
 				verbose="1"
 				echo "VERBOSE";;
 	    --)
+				echo "end of getopt args"
 				shift
 				break;;
 	    *)
@@ -83,7 +86,10 @@ args() {
     done
 }
 
+
+
 num_args() {
+echo "1: $1 2: $2 3: $3 4: $4 5: $5"
     case ${#} in
 	0)
 	    echo "zero"
@@ -107,6 +113,10 @@ num_args() {
 	    echo "${0##*/} - Wrong number of arguments."
 	    { usage; exit 1; };;
     esac
+echo "src 1: $src_dirs"
+echo "dst 1: $dst_dirs"
+[[ ! -d ${src_dirs} ]] && { echo "${src_dirs} - Source directory does not exist."; }
+[[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs} - Destination directory does not exist."; exit 1; }
 }
 
 # Accept $src_dirs, $dst_dirs. Return void
@@ -145,12 +155,8 @@ convert() {
 
 sanity
 args "${@}"
-echo "1: $1 2: $2 3: $3 4: $4 5: $5"
 num_args "${@}"
-echo "src 1: $src_dirs"
-echo "dst 1: $dst_dirs"
-[[ ! -d ${src_dirs} ]] && { echo "${src_dirs} - Source directory does not exist."; }
-[[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs} - Destination directory does not exist."; exit 1; }
+
 
 
 #args "${@}"
