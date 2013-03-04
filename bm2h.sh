@@ -8,7 +8,7 @@
 # There is NO WARRANTY, to the extent permitted by law.
 #
 
-source bm2h.conf
+[[ -f bm2h.conf ]] && . bm2h.conf || { echo "bm2h.conf is missing!"; exit 1; }
 
 scrname="bm2h"
 scrver="0.4"
