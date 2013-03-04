@@ -56,10 +56,10 @@ sanity() {
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
-    [[ ! -d ${src_root} ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m."
+    [[ ! -d ${src_root} ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
     if [[ ! -d "${dst_root}" ]]; then
 	if (( ${#} == 0 )); then
-	    echo -e "${dst_root%/} - Destination directory does not exist." # Strip trailing /
+	    echo -e "${dst_root%/} - Destination directory does not exist." 
 	    read -p "Do you want it to be created? [y/N]"
 	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
 	fi
@@ -98,7 +98,7 @@ args() {
 				shift;;
 	    -t|--html-type)
 				[[ -n "${2}" ]] && html_type="${2}"
-				shift 2;; # Options with arguments need to be shiftet twice
+				shift 2;; # Options with arguments need to be shifted twice
 	    -m|--m2h-opt)
 				[[ -n "${2}" ]] && m2h_arg="${2}"
 				shift 2;;
