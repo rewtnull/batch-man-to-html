@@ -58,6 +58,7 @@ sanity() {
     fi
 }
 
+# Accept any. Return any
 verbose_mode() {
     case ${verbose} in
 	0) echo -e "$@" 1> /dev/null;;
@@ -65,6 +66,7 @@ verbose_mode() {
     esac
 }
 
+# Accept any. Return $src_dirs $dst_dirs
 args() {
     getopt_arg=$(getopt -o "Vhsv" -l "version,help,generate-stub,verbose" -n "${0##*/}" -- "${@}") || { usage; exit 1; }
     eval set -- "${getopt_arg}"
@@ -124,6 +126,7 @@ files_array() {
     done
 }
 
+# Accept $src_files. Return void
 convert() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
@@ -135,11 +138,11 @@ convert() {
 			    verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
 			else
 			    verbose_mode "Converting ${src_files[$i]} to ${dst_files}"
-#			    bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
+			    bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
 			fi;;
 		    1)
 			verbose_mode "Converting ${src_files[$i]} to ${dst_files}"
-#			bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
+			bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
 		esac
 	    else
 		verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
