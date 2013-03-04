@@ -32,7 +32,6 @@ error() {
     { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
-
 version() {
     local scrname="bm2h"
     local scrver="0.5"
