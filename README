@@ -83,7 +83,7 @@ CONFIGURATION
           in bm2h.conf. If the value is set to "1", --verbose will assume the
           value to be "0" and vice versa.
 
-          Default: "1".
+          Default: "1"
 
         - Optionally set gen_stub
 
@@ -100,7 +100,7 @@ CONFIGURATION
           value set in bm2h.conf. If the value is set to "1", --generate-stub
           will assume the value to be "0" and vice versa.
 
-          Default: "0".
+          Default: "0"
 
         - man_dirs is used to expand man* directories under $src_root.
 
