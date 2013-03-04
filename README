@@ -48,8 +48,8 @@ CONFIGURATION
 
         - Optionally set m2h_opt
 
-          Edit your custom man2html options in m2h_arg. See man2html(1) for
-          more information.
+          Edit your custom man2html options with the m2h_opt setting.
+          See man2html(1) for more information.
 
           Default: ""
 
@@ -92,7 +92,7 @@ CONFIGURATION
           manpages that are not present under /path/to/man/man*.
           See man(1) for more information.
 
-          If you change this, be sure to begin it with a /
+          If you change this, make sure it begins with a /
 
           Default: "/man*"
 
@@ -121,12 +121,12 @@ DEPENDENCIES
         - Fairly recent version of Bash. Tested on v4.1 only
         - GNU getopt. This might impose a problem on BSD/OSX systems, which
           use another implementation of getopt. Installing GNU getopt on
-          these systems should take care of things
+          these systems should take care of it
         - bzcat, which is a part of the bzip2 package
         - man2html
 
         bm2h.sh has a built in sanity check and will exit if any of these
-        conditions aren't met. Excepted is getopt, to which I've only had
+        conditions aren't met. An Exception is getopt, to which I've only had
         the chance to write a generic check, since I haven't had the
         oportunity to install GNU getopt on a BSD/OSX system.
 
@@ -147,15 +147,15 @@ HISTORY
                         [+] Added to github
         v0.4 (20130304) [+] Added some sanity checks
                         [*] More code cleanup
-                        [*] Changed arguments to allow extended arguments
-                        [+] Added verbose mode. Shell argument -v|--verbose
-                            overrides the mh2m.conf verbose setting
-                        [+] Added shell argument -s|--generate-stub which
-                            overrides the mh2m.conf gen_stub setting
+                        [+] Added command line options support
+                        [+] Added verbose mode. Shell option -v|--verbose
+                            reverses the mh2m.conf verbose setting
+                        [+] Added shell option -s|--generate-stub which
+                            reverses the mh2m.conf gen_stub setting
 
 TODO
         - Update destination html's with newer versions/revisions
         - Change compression type
-        - Shell argument for m2h_arg setting
-        - Shell argument for html_type setting
+        - Shell option for m2h_arg setting
+        - Shell option for html_type setting
         - Skip or overwrite duplicate files
