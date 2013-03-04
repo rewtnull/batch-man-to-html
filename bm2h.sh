@@ -48,7 +48,7 @@ sanity() {
     [[ $(type -p getopt) == "" ]] && { echo -e "GNU getopt \033[1mrequired.\033[m"; exit 1; }
     [[ $(type -p bzcat) == "" ]] && { echo -e "bzcat (bzip2) \033[1mrequired.\033[m"; exit 1; }
     [[ $(type -p man2html) == "" ]] && { echo -e "man2html \033[1mrequired.\033[m"; exit 1; }
-    [[ ! -d ${src_root} ]] && { echo -e "${src_root} - Directory \033[1mdoes not exist\033[m."; exit 1; }
+    [[ ! -d ${src_root} ]] && { echo -e "${src_root%/} - Directory \033[1mdoes not exist\033[m."; exit 1; }
     if [[ ! -d "${dst_root}" ]]; then
 	if (( ${#} == 0 )); then
 	    echo "${dst_root%/} - Destination directory does not exist." # Strip trailing /
