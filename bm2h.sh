@@ -17,7 +17,7 @@ authnick="dMG/Up Rough"
 scrcontact="marcus.hoffren@gmail.com"
 
 usage() {
-    echo "Usage: ${0##*/} [--help|-h] [--version|-v] [OPTIONS] [source] [[source] [destination]]"
+    echo "Usage: ${0##*/} [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]"
     echo ""
     echo "-h, --help            Display this help and exit"
     echo "-V, --version         Display version and exit"
