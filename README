@@ -59,12 +59,18 @@ CONFIGURATION
           Edit your custom man2html options with the m2h_opt setting.
           See man2html(1) for more information.
 
+          Using the command line option -m|--m2h-opt will override the
+          value set in bm2h.conf.
+
           Default: ""
 
         - Optionally set html_type
 
           With this setting you can change the file suffix of destination
           html files.
+
+          Using the command line option -t|--html-type will override the
+          value set in bm2h.conf.
 
           Default: "html"
 
@@ -73,11 +79,11 @@ CONFIGURATION
           If set to "0", only error messages will be shown on STDERR. If set to
           "1" it will also show conversion progress on STDOUT.
 
-          Default: "1".
-
           Using the command line option -v|--verbose will reverse the value set
           in bm2h.conf. If the value is set to "1", --verbose will assume the
           value to be "0" and vice versa.
+
+          Default: "1".
 
         - Optionally set gen_stub
 
@@ -90,11 +96,11 @@ CONFIGURATION
           installed, which ordinary manpages exist on your system or just to
           keep a fairly complete command reference list.
 
-          Default: "0".
-
           Using the command line option -s|--generate-stub will reverse the
           value set in bm2h.conf. If the value is set to "1", --generate-stub
           will assume the value to be "0" and vice versa.
+
+          Default: "0".
 
         - man_dirs is used to expand man* directories under $src_root.
 
