@@ -29,7 +29,7 @@ usage() {
 }
 
 error() {
-    { echo -e "$@" 1>&2; usage; exit 1; }
+    { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
 [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
