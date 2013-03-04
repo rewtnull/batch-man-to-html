@@ -5,40 +5,48 @@ VERSION
         0.5
 
 SYNOPSIS
-        bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]
+        bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
 
 DESCRIPTION
         Batch unpack and convert manpages to html from source manpage
         directory to a destination directory.
 
-        It is designed to automate conversion, either by running it with or
-        without command line arguments. If no arguments are given, it will
-        use the default values from bm2h.conf. Since this script checks if
-        the destination files exist, new manpages can be accumulated by by
-        re-running it with the same arguments or bm2h.conf settings.
+        bm2h.sh is designed to automate conversion, either by running it with
+        or without command line arguments. If no arguments are given, and
+        --automatic option is used, it will use the default values from
+        bm2h.conf.
+
+        Since this script checks if the destination files exist, new manpages
+        can be accumulated by by re-running it with the same arguments or
+        bm2h.conf settings.
 
 ARGUMENTS
-        -h, --help            Display this help and exit
-        -V, --version         Display version and exit
+        -h, --help                  Display this help and exit
+        -V, --version               Display version and exit
 
         OPTIONS:
 
-        -v, --verbose         Verbose mode
-        -s, --generate-stub   Generate stubs
+        -a, --automatic             Automatic mode using bm2h.conf settings
+        -v, --verbose               Verbose mode
+        -s, --generate-stub         Generate stubs
+        -p, --pretend               Do everything except generating html
+        -t, --html-type <type>      Overrides bm2h.conf html_type setting
+        -m, --m2h-opt "<options>"   Quoted list of options for man2html
+                                    See man2html(1) for more information
 
         No arguments, source directory, or source and destination directory
         accepted
 
 CONFIGURATION
-        bm2h.conf is to be kept in the same directory as bm2h.sh.
+        bm2h.conf is to be kept in the same directory as bm2h.sh
 
         - Change dst_root
 
-          dst_root is the destination path if no- or one argument is used.
+          dst_root is the destination path if no, or one argument is given.
 
         - Change src_root
 
-          src_root is the source path if no- or one argument is used.
+          src_root is the source path if no, or one argument is given.
 
           You only need to change this if your manpage directories are located
           somewhere else than /usr/share/man.
@@ -62,8 +70,8 @@ CONFIGURATION
 
         - Set the default verbose mode.
 
-          If set to "0", only error messages will be shown, if set to "1" it
-          will show conversion progress on STDOUT.
+          If set to "0", only error messages will be shown on STDERR. If set to
+          "1" it will also show conversion progress on STDOUT.
 
           Default: "1".
 
@@ -154,12 +162,14 @@ HISTORY
                             reverses the mh2m.conf verbose setting
                         [+] Added command line option -s|--generate-stub which
                             reverses the mh2m.conf gen_stub setting
-        v0.5 (20130300) [+] Redirecting all errors to STDERR
+        v0.5 (20130304) [+] Redirecting all errors to STDERR
+                        [*] Use -a|--automatic with no arguments to explicitly
+                            use bm2h.conf settings
+                        [+] Added -p|--pretend mode
+                        [+] Added -t|--html-type command line option
+                        [+] Added -m|--m2h-opt command line option
 
 TODO
         - Update destination html's with newer versions/revisions
         - Change compression type
-        - Command line option for m2h_arg setting
-        - Command line option for html_type setting
         - Skip or overwrite duplicate files
-        - Pretend mode
