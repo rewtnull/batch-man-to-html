@@ -92,9 +92,9 @@ args() {
 	    src_dirs=( $(echo "${src_root%/}${man_dirs%/}") )
 	    dst_dirs=( $(echo "${dst_root%/}") );;
 	1)
-	    [[ ! -d ${1} ]] && { echo "${1} - Source directory does not exist."; exit 1; }
+	    [[ ! -d ${1} ]] && { echo "${1%/} - Source directory does not exist."; exit 1; }
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d ${src_dirs} ]] && { echo "No man directories found under ${src_dirs}"; exit 1; }
+	    [[ ! -d ${src_dirs} ]] && { echo "No man directories found under ${src_dirs%/}"; exit 1; }
 	    dst_dirs=( $(echo "${dst_root%/}") );;
 	2)
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
@@ -107,8 +107,8 @@ args() {
 	*)
 	    { echo "${0##*/} - Wrong number of arguments."; usage; exit 1; };;
     esac
-    [[ ! -d ${src_dirs} ]] && { echo "${src_dirs} - Source directory does not exist."; exit 1; }
-    [[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs} - Destination directory does not exist."; exit 1; }
+    [[ ! -d ${src_dirs} ]] && { echo "${src_dirs%/} - Source directory does not exist."; exit 1; }
+    [[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs%/} - Destination directory does not exist."; exit 1; }
 }
 
 # Accept $src_dirs, $dst_dirs. Return void
