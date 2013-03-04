@@ -105,8 +105,7 @@ args() {
 		[[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
 	    fi;;
 	*)
-	    echo "${0##*/} - Wrong number of arguments."
-	    { usage; exit 1; };;
+	    { echo "${0##*/} - Wrong number of arguments."; usage; exit 1; };;
     esac
     [[ ! -d ${src_dirs} ]] && { echo "${src_dirs} - Source directory does not exist."; exit 1; }
     [[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs} - Destination directory does not exist."; exit 1; }
