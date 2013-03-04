@@ -147,7 +147,7 @@ DEPENDENCIES
         oportunity to install GNU getopt on a BSD/OSX system.
 
 HISTORY
-        LEGEND: [+] Added, [-] Removed, [*] Changed, [!] Bugfixed
+        LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
 
         v0.1 (20130224) [+] Initial release
         v0.2 (20130225) [!] Fixed bug where destination path would break if
