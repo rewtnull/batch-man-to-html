@@ -32,7 +32,6 @@ error() {
     { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
-[[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
 
 version() {
     local scrname="bm2h"
@@ -52,6 +51,7 @@ version() {
 
 # Void
 sanity() {
+    [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
     [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m."
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
