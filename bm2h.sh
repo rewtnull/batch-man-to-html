@@ -50,15 +50,15 @@ version() {
 
 # Void
 sanity() {
-    [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
     [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m."
+    [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
     [[ ! -d ${src_root} ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
     if [[ ! -d "${dst_root}" ]]; then
 	if (( ${#} == 0 )); then
-	    echo -e "${dst_root%/} - Destination directory does not exist." 
+	    echo -e "${dst_root%/} - Destination directory does not exist."
 	    read -p "Do you want it to be created? [y/N]"
 	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
 	fi
@@ -68,14 +68,15 @@ sanity() {
 # Accept any. Return any
 verbose_mode() {
     case ${verbose} in
-	0) { echo -e "${@}" 1> /dev/null; };;
-	1) { echo -e "${@}"; };;
+	0) echo -e "${@}" 1> /dev/null;;
+	1) echo -e "${@}";;
     esac
 }
 
 # Accept any. Return $src_dirs $dst_dirs
 args() {
-    getopt_arg=$(getopt -o "Vhasvpt:m:" -l "version,help,generate-stub,automatic,verbose,pretend,html-type:m2h-opt:" -n "${0##*/}" -- "${@}") || { usage; exit 1; }
+    getopt_arg=$(getopt -o "Vhasvpt:m:" -l "version,help,generate-stub,automatic,verbose,pretend,html-type:m2h-opt:" \
+			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
     eval set -- "${getopt_arg}"
     while (( ${#} > 0 )); do
 	case "${1}" in
