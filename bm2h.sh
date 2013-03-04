@@ -15,7 +15,7 @@ error() {
 [[ -f bm2h.conf ]] && . bm2h.conf || { error "bm2h.conf is missing!"; exit 1; }
 
 scrname="bm2h"
-scrver="0.4"
+scrver="0.5"
 scrauth="Marcus Hoffren"
 authnick="dMG/Up Rough"
 scrcontact="marcus.hoffren@gmail.com"
