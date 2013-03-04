@@ -134,8 +134,8 @@ COPYRIGHT
         There is NO WARRANTY, to the extent permitted by law.
 
 DEPENDENCIES
-        - Fairly recent version of Bash. Tested on v4.1 only
-        - GNU getopt. This might impose a problem on BSD/OSX systems, which
+        - Fairly recent version of Bash. Tested with v4.1 only
+        - GNU getopt. This might impose a problem on BSD/OSX systems which
           use another implementation of getopt. Installing GNU getopt on
           these systems should take care of it
         - bzcat, which is a part of the bzip2 package
@@ -143,7 +143,7 @@ DEPENDENCIES
 
         bm2h.sh has a built in sanity check and will exit if any of these
         conditions aren't met. An Exception is getopt, to which I've only had
-        the chance to write a generic check, since I haven't had the
+        the chance to write a generic check since I haven't had the
         oportunity to install GNU getopt on a BSD/OSX system.
 
 HISTORY
