@@ -148,7 +148,7 @@ convert() {
 			bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
 		esac
 	    else
-		 echo -e "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
+		 verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
 	    fi
 	done
 	verbose_mode ""
