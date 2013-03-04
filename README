@@ -5,7 +5,7 @@ VERSION
         0.4
 
 SYNOPSIS
-        bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]"
+        bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]
 
 DESCRIPTION
         Batch unpack and convert manpages to html from source manpage
