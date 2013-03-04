@@ -5,38 +5,102 @@ VERSION
         0.3
 
 SYNOPSIS
-        bm2h.sh [--help|-h] [--version|-v] [source] [ [source] [destination] ]
+        bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]"
 
 DESCRIPTION
         Batch unpack and convert manpages to html from source manpage
         directory to a destination directory.
 
         It is designed to automate conversion, either by running it with or
-        without command line arguments. Since it checks if the destination
-        files exist, new manpages can be accumulated by by re-running the
-        script with the same arguments or path settings.
+        without command line arguments. If no arguments are given, it will
+        use the default values from bm2h.conf. Since this script checks if
+        the destination files exist, new manpages can be accumulated by by
+        re-running it with the same arguments or bm2h.conf settings.
 
 ARGUMENTS
-        -h, --help        Display help
+        -h, --help            Display this help and exit
+        -V, --version         Display version and exit
 
-        -v, --version     Display version
+        OPTIONS:
+
+        -v, --verbose         Verbose mode
+        -s, --generate-stub   Generate stubs
 
         No arguments, source directory, or source and destination directory
-        accepted.
+        accepted
 
-SETUP
+CONFIGURATION
         bm2h.conf is to be kept in the same directory as bm2h.sh.
 
-        Accepts:
-        - No arguments; dst_root and src_root settings must be set
-        - One argument; dst_root setting must be set
-        - Two arguments; no path settings need to be set
-
         - Change dst_root
-        - Change src_root if your manpage dirs are somewhere else than 
-          /usr/share/man
-        - Optionally set m2h_arg
+
+          dst_root is the destination path if no- or one argument is used.
+
+        - Change src_root
+
+          src_root is the source path if no- or one argument is used.
+
+          You only need to change this if your manpage dirs are located
+          somewhere else than /usr/share/man.
+
+          When this path is set, the script expects man* directories to be
+          found right under it unless the man_dirs setting is changed.
+
+        - Optionally set m2h_opt
+
+          Edit your custom man2html options in m2h_arg. See man2html(1) for
+          more information.
+
+          Default: ""
+
         - Optionally set html_type
+
+          With this setting you can change the file suffix of destination
+          html files.
+
+          Default: "html"
+
+        - Set the default verbose mode.
+
+          If set to "0", only error messages will be shown, if set to "1" it
+          will show conversion progress on STDOUT.
+
+          Default: "1".
+
+          Using the script option -v|--verbose will reverse the value set in
+          bm2h.conf. If the value is set to "1", --verbose will assume the
+          value to be "0" and vice versa.
+
+        - Optionally set gen_stub
+
+          This setting decides whether to generate stub manpages or not.
+
+          If set to "0", no stub html files will be generated. Set this to "1"
+          if you want to generate stubs.
+
+          This is good if you want a better view of which packages you have
+          installed, which ordinary manpages exist on your system or just to
+          keep a fairly complete command reference list.
+
+          Using the script option -s|--generate-stub will reverse the value set
+          in bm2h.conf. If the value is set to "1", --generate-stub will assume
+          the value to be "0" and vice versa.
+
+        - man_dirs is used to expand man* directories under $src_root.
+
+          There is no need to change this unless you want to batch convert
+          manpages that are not present under /path/to/man/man*.
+          See man(1) for more information.
+
+          If you change this, be sure to begin it with a /
+
+          Default: "/man*"
+
+        - comp_type should be left untouched for now.
+
+          This was added as a stub if there would be systems with manpages
+          that are not bz2 compressed. This script currently explicitly
+          expects bz2 compressed manpages.
 
 AUTHOR
         Written by Marcus Hoffren
@@ -55,30 +119,43 @@ COPYRIGHT
 
 DEPENDENCIES
         - Fairly recent version of Bash. Tested on v4.1 only
+        - GNU getopt. This might impose a problem on BSD/OSX systems, which
+          use another implementation of getopt. Installing GNU getopt on
+          these systems should take care of things
         - bzcat, which is a part of the bzip2 package
         - man2html
 
         bm2h.sh has a built in sanity check and will exit if any of these
-        conditions aren't met.
+        conditions aren't met. Excepted is getopt, to which I've only had
+        the chance to write a generic check, since I haven't had the
+        oportunity to install GNU getopt on a BSD/OSX system.
 
 HISTORY
-        v0.1 (20130224) - Initial release
-        v0.2 (20130225) - Fixed bug where destination path would break if
-                          ${src_root} was changed
-                        - Separated ${html_type} and ${comp_type}. For now,
-                          comp_type shouldn't be touched since the script
-                          relies on bzcat to explicitly unpack bz2 compressed
-                          manpages
-        v0.3 (20130302) - Added arguments support
-                        - Code cleanup/partial rewrite
-                        - Fixed bug in bzcat syntax which generated the same
-                          file multiple times
-                        - Added to github
-        v0.4 (20130000) - Added a couple of more checks
-                        - More code cleanup
+        LEGEND: [+] Added, [-] Removed, [*] Changed, [!] Bugfix
+
+        v0.1 (20130224) [+] Initial release
+        v0.2 (20130225) [!] Fixed bug where destination path would break if
+                            ${src_root} was changed
+                        [*] Separated ${html_type} and ${comp_type}. For now,
+                            comp_type shouldn't be touched since the script
+                            relies on bzcat to explicitly unpack bz2
+                            compressed manpages
+        v0.3 (20130302) [+] Added arguments support
+                        [*] Code cleanup/partial rewrite
+                        [!] Fixed bug in bzcat syntax which generated the same
+                            file multiple times
+                        [+] Added to github
+        v0.4 (20130000) [+] Added some sanity checks
+                        [*] More code cleanup
+                        [*] Changed arguments to allow extended arguments
+                        [+] Added verbose mode. Shell argument -v|--verbose
+                            overrides the mh2m.conf verbose setting
+                        [+] Added shell argument -s|--generate-stub which
+                            overrides the mh2m.conf gen_stub setting
 
 TODO
-        - Ability to update destination html's with newer versions/revisions
-        - Toggle ability to skip/generate stub manpages
-        - Ability to change compression type
-        - Non-verbose (silent) mode toggle
+        - Update destination html's with newer versions/revisions
+        - Change compression type
+        - Shell argument for m2h_arg setting
+        - Shell argument for html_type setting
+        - Skip or overwrite duplicate files
