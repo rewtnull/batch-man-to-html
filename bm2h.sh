@@ -136,11 +136,11 @@ convert() {
 			if [[ $(bzcat "${src_files[$i]}") =~ ^.so ]]; then
 			    verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
 			else
-			    verbose_mode "Converting ${src_files[$i]} to ${dst_files}"
+			    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
 			    bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
 			fi;;
 		    1)
-			verbose_mode "Converting ${src_files[$i]} to ${dst_files}"
+			verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
 			bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
 		esac
 	    else
