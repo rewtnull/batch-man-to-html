@@ -150,15 +150,15 @@ HISTORY
         v0.4 (20130304) [+] Added some sanity checks
                         [*] More code cleanup
                         [+] Added command line options support
-                        [+] Added verbose mode. Shell option -v|--verbose
+                        [+] Added verbose mode. Command line option -v|--verbose
                             reverses the mh2m.conf verbose setting
-                        [+] Added shell option -s|--generate-stub which
+                        [+] Added command line option -s|--generate-stub which
                             reverses the mh2m.conf gen_stub setting
 
 TODO
         - Update destination html's with newer versions/revisions
         - Change compression type
-        - Shell option for m2h_arg setting
-        - Shell option for html_type setting
+        - Command line option for m2h_arg setting
+        - Command line option for html_type setting
         - Skip or overwrite duplicate files
         - Pretend mode
