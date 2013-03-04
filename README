@@ -145,7 +145,7 @@ HISTORY
                         [!] Fixed bug in bzcat syntax which generated the same
                             file multiple times
                         [+] Added to github
-        v0.4 (20130000) [+] Added some sanity checks
+        v0.4 (20130304) [+] Added some sanity checks
                         [*] More code cleanup
                         [*] Changed arguments to allow extended arguments
                         [+] Added verbose mode. Shell argument -v|--verbose
