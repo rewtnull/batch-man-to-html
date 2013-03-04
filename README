@@ -40,7 +40,7 @@ CONFIGURATION
 
           src_root is the source path if no- or one argument is used.
 
-          You only need to change this if your manpage dirs are located
+          You only need to change this if your manpage directories are located
           somewhere else than /usr/share/man.
 
           When this path is set, the script expects man* directories to be
