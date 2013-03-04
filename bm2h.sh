@@ -8,7 +8,11 @@
 # There is NO WARRANTY, to the extent permitted by law.
 #
 
-[[ -f bm2h.conf ]] && . bm2h.conf || { echo "bm2h.conf is missing!"; exit 1; }
+error() {
+    { echo -e "$@" 1>&2; }
+}
+
+[[ -f bm2h.conf ]] && . bm2h.conf || { error "bm2h.conf is missing!"; exit 1; }
 
 scrname="bm2h"
 scrver="0.4"
@@ -44,14 +48,14 @@ version() {
 
 # Void
 sanity() {
-    [[ "${BASH_VERSION}" < 4.1 ]] && { echo -e "${scrname} requires \033[1mbash v4.1 or newer\033[m."; exit 1; }
-    [[ $(type -p getopt) == "" ]] && { echo -e "GNU getopt \033[1mrequired.\033[m"; exit 1; }
-    [[ $(type -p bzcat) == "" ]] && { echo -e "bzcat (bzip2) \033[1mrequired.\033[m"; exit 1; }
-    [[ $(type -p man2html) == "" ]] && { echo -e "man2html \033[1mrequired.\033[m"; exit 1; }
-    [[ ! -d ${src_root} ]] && { echo -e "${src_root%/} - Directory \033[1mdoes not exist\033[m."; exit 1; }
+    [[ "${BASH_VERSION}" < 4.1 ]] && { error "${scrname} requires \033[1mbash v4.1 or newer\033[m."; exit 1; }
+    [[ $(type -p getopt) == "" ]] && { error "GNU getopt \033[1mrequired.\033[m"; exit 1; }
+    [[ $(type -p bzcat) == "" ]] && { error "bzcat (bzip2) \033[1mrequired.\033[m"; exit 1; }
+    [[ $(type -p man2html) == "" ]] && { error "man2html \033[1mrequired.\033[m"; exit 1; }
+    [[ ! -d ${src_root} ]] && { error "${src_root%/} - Directory \033[1mdoes not exist\033[m."; exit 1; }
     if [[ ! -d "${dst_root}" ]]; then
 	if (( ${#} == 0 )); then
-	    echo "${dst_root%/} - Destination directory does not exist." # Strip trailing /
+	    echo -e "${dst_root%/} - Destination directory does not exist." # Strip trailing /
 	    read -p "Do you want it to be created? [y/N]"
 	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
 	fi
@@ -92,23 +96,23 @@ args() {
 	    src_dirs=( $(echo "${src_root%/}${man_dirs%/}") )
 	    dst_dirs=( $(echo "${dst_root%/}") );;
 	1)
-	    [[ ! -d ${1} ]] && { echo "${1%/} - Source directory does not exist."; exit 1; }
+	    [[ ! -d ${1} ]] && { error "${1%/} - Source directory does not exist."; exit 1; }
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d ${src_dirs} ]] && { echo "No man directories found under ${src_dirs%/}"; exit 1; }
+	    [[ ! -d ${src_dirs} ]] && { error "No man directories found under ${src_dirs%/}"; exit 1; }
 	    dst_dirs=( $(echo "${dst_root%/}") );;
 	2)
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
 	    dst_dirs=( $(echo "${2%/}") )
 	    if [[ ! -d ${dst_dirs} ]]; then
-		echo "${2%/} - Destination directory does not exist."
+		echo -e "${2%/} - Destination directory does not exist."
 		read -p "Do you want it to be created? [y/N]"
 		[[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
 	    fi;;
 	*)
-	    { echo "${0##*/} - Wrong number of arguments."; usage; exit 1; };;
+	    { error "${0##*/} - Wrong number of arguments."; usage; exit 1; };;
     esac
-    [[ ! -d ${src_dirs} ]] && { echo "${src_dirs%/} - Source directory does not exist."; exit 1; }
-    [[ ! -d ${dst_dirs} ]] && { echo "${dst_dirs%/} - Destination directory does not exist."; exit 1; }
+    [[ ! -d ${src_dirs} ]] && { error "${src_dirs%/} - Source directory does not exist."; exit 1; }
+    [[ ! -d ${dst_dirs} ]] && { error "${dst_dirs%/} - Destination directory does not exist."; exit 1; }
 }
 
 # Accept $src_dirs, $dst_dirs. Return void
@@ -144,12 +148,12 @@ convert() {
 			bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
 		esac
 	    else
-		verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
+		 echo -e "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
 	    fi
 	done
-	echo ""
-	echo "Done!"
-	echo ""
+	verbose_mode ""
+	verbose_mode "Done!"
+	verbose_mode ""
 }
 
 sanity

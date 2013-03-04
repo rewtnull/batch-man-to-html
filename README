@@ -2,7 +2,7 @@ NAME
         bm2h - Batch man to html
 
 VERSION
-        0.4
+        0.5
 
 SYNOPSIS
         bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]
@@ -109,7 +109,7 @@ AUTHOR
 
 REPORTING BUGS
         Report bm2h.sh bugs to marcus.hoffren@gmail.com
-        Updates to bm2h.sh and other projects of mine can be found at
+        Updates of bm2h.sh and other projects of mine can be found at
         https://github.com/rewtnull?tab=repositories
 
 COPYRIGHT
@@ -154,6 +154,7 @@ HISTORY
                             reverses the mh2m.conf verbose setting
                         [+] Added command line option -s|--generate-stub which
                             reverses the mh2m.conf gen_stub setting
+        v0.5 (20130300) [+] Redirecting all errors to STDERR
 
 TODO
         - Update destination html's with newer versions/revisions
