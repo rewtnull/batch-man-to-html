@@ -2,7 +2,7 @@ NAME
         bm2h - Batch man to html
 
 VERSION
-        0.3
+        0.4
 
 SYNOPSIS
         bm2h.sh [--help|-h] [--version|-v] [OPTIONS] [src] [[src] [dest]]"
