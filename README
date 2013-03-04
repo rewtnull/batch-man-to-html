@@ -159,3 +159,4 @@ TODO
         - Shell option for m2h_arg setting
         - Shell option for html_type setting
         - Skip or overwrite duplicate files
+        - Pretend mode
