@@ -177,7 +177,8 @@ HISTORY
                         [+] Added -t|--html-type command line option
                         [+] Added -m|--m2h-opt command line option
         v0.6 (20130305) [*] Now asks if you want to create destination
-                            directory if none is given
+                            directory if none is given. Which directory to be
+                            created is decided with the dst_root setting
                         [*] Code cleanup
 
 TODO
