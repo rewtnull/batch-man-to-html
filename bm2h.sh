@@ -117,14 +117,14 @@ args() {
 		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
 	    esac;;
 	1)
-	    [[ ! -d ${1} ]] && error "${1%/} - Source directory does not exist."
+	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d ${src_dirs} ]] && error "No man directories found under ${src_dirs%/}"
+	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
 	    dst_dirs=( $(echo "${dst_root%/}") );;
 	2)
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
 	    dst_dirs=( $(echo "${2%/}") )
-	    if [[ ! -d ${dst_dirs} ]]; then
+	    if [[ ! -d "${dst_dirs}" ]]; then
 		echo -e "${2%/} - Destination directory does not exist."
 		read -p "Do you want it to be created? [y/N]"
 		[[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
@@ -132,14 +132,14 @@ args() {
 	*)
 	    error "${0##*/} - Wrong number of arguments.";;
     esac
-    [[ ! -d ${src_dirs} ]] && error "${src_dirs%/} - Source directory does not exist."
-    [[ ! -d ${dst_dirs} ]] && error "${dst_dirs%/} - Destination directory does not exist."
+    [[ ! -d "${src_dirs}" ]] && error "${src_dirs%/} - Source directory does not exist."
+    [[ ! -d "${dst_dirs}" ]] && error "${dst_dirs%/} - Destination directory does not exist."
 }
 
 # Accept $src_dirs, $dst_dirs. Return void
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
+	[[ ! -d "${dst_dirs}/${src_dirs[$i]##*/}" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
     done
 }
 
@@ -162,11 +162,11 @@ convert() {
 			    verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
 			else
 			    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-			    [[ ${pretend} != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
+			    [[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
 			fi;;
 		    1)
 			verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-			[[ ${pretend} != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
+			[[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
 		esac
 	    else
 		 verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
