@@ -57,7 +57,7 @@ sanity() {
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
     [[ ! -d ${src_root} ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
     if [[ ! -d "${dst_root}" ]]; then
-	if (( ${#} == 0 )); then
+	if (( ${#} < 2 )); then
 	    echo -e "${dst_root%/} - Destination directory does not exist."
 	    read -p "Do you want it to be created? [y/N]"
 	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
