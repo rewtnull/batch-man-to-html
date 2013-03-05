@@ -20,9 +20,11 @@ usage() {
     echo "-g, --generate-stub         Toggle generate stub html pages"
     echo "                            (Reverses bm2h.conf gen_stub setting)"
     echo "-m, --m2h-opt <\"options\">   Quoted list of man2html options"
-    echo "                            (See man2html(1) for more information)"
+    echo "                            See man2html(1) for more information"
     echo "                            (Overrides bm2h.conf m2h_opt setting)"
-    echo "-p, --pretend               Do everything except generating html"
+    echo "-p, --pretend               Do everything except creating directories"
+    echo "                            and generating html"
+    echo "                            (Reverses bm2h.conf pretend setting)"
     echo "-s, --skip                  Toggle skip/overwrite destination files"
     echo "                            (Reverses bm2h.conf skip setting)"
     echo "-t, --html-type <type>      Choose destination file suffix"
@@ -40,8 +42,8 @@ error() {
 }
 
 version() {
-    local scrname="bm2h"
-    local scrver="0.6"
+    local scrname="Batch Man to Html"
+    local scrver="0.7"
     local scrauth="Marcus Hoffren"
     local authnick="dMG/Up Rough"
     local scrcontact="marcus.hoffren@gmail.com"
@@ -67,7 +69,11 @@ sanity() {
 	if (( ${#} != 0 || ${#} != 1 )); then
 	    echo -e "${dst_root%/} - Destination directory does not exist."
 	    read -p "Do you want it to be created? [y/N]"
-	    [[ "${REPLY}" == "y" ]] && mkdir ${dst_root%/} || exit 1
+	    if [[ "${REPLY}" == "y" ]]; then
+		[[ "${pretend}" != "1" ]] && mkdir ${dst_root%/}
+	    else
+		exit 1
+	    fi
 	fi
     fi
 }
@@ -138,7 +144,11 @@ args() {
 	    if [[ ! -d "${dst_dirs}" ]]; then
 		echo -e "${2%/} - Destination directory does not exist."
 		read -p "Do you want it to be created? [y/N]"
-		[[ "${REPLY}" == "y" ]] && mkdir ${2%/} || exit 1
+		if [[ "${REPLY}" == "y" ]]; then
+		    [[ "${pretend}" != "1" ]] && mkdir ${2%/}
+		else
+		    exit 1
+		fi
 	    fi;;
 	*)
 	    error "${0##*/} - Wrong number of arguments.";;
@@ -150,7 +160,8 @@ args() {
 # Accept $src_dirs, $dst_dirs. Return void
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	[[ ! -d "${dst_dirs}/${src_dirs[$i]##*/}" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
+	[[ ! -d "${dst_dirs}/${src_dirs[$i]##*/}" ]] && [[ "${pretend}" != "1" ]] &&
+	    mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
     done
 }
 

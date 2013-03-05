@@ -2,7 +2,7 @@ NAME
         bm2h - Batch man to html
 
 VERSION
-        0.6
+        0.7
 
 SYNOPSIS
         bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
@@ -30,9 +30,11 @@ ARGUMENTS
         -g, --generate-stub         Toggle generate stub html pages
                                     (Reverses bm2h.conf gen_stub setting)
         -m, --m2h-opt <"options">   Quoted list of man2html options
-                                    (See man2html(1) for more information)
+                                    See man2html(1) for more information
                                     (Overrides bm2h.conf m2h_opt setting)
-        -p, --pretend               Do everything except generating html
+        -p, --pretend               Do everything except creating directories
+                                    and generating html
+                                    (Reverses bm2h.conf pretend setting)
         -s, --skip                  Toggle skip/overwrite destination files
                                     (Reverses bm2h.conf skip setting)
         -t, --html-type <type>      Choose destination file suffix
@@ -101,6 +103,18 @@ CONFIGURATION
           value to be "0" and vice versa.
 
           Default: "1"
+
+        - Set the default pretend mode.
+
+          If set to "0", the script will work in normal mode.
+          If set to "1", the script will do everything besides creating dirs
+          and generating html.
+
+          Using the command line option -p|--pretend will reverse the value set in
+          bm2h.conf. If the value is set to "1", --pretend will assume the
+          value to be "0" and vice versa.
+
+          Default: "0"
 
         - Optionally set gen_stub
 
@@ -200,6 +214,9 @@ HISTORY
                         [+] Added -s|--skip command line option
                         [*] Changed short option -s for --generate-stub to -g
                             in order to use -s for the new -s|--skip option
+        v0.7 (20130306) [!] Fixed bug where --pretend would still create
+                            directories
+
 TODO
         - Update destination html's with newer versions/revisions
         - Change compression type
