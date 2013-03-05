@@ -17,14 +17,21 @@ usage() {
     echo "OPTIONS:"
     echo ""
     echo "-a, --automatic             Automatic mode using bm2h.conf settings"
-    echo "-v, --verbose               Verbose mode"
-    echo "-s, --generate-stub         Generate stubs"
+    echo "-g, --generate-stub         Toggle generate stub html pages"
+    echo "                            (Reverses bm2h.conf gen_stub setting)"
+    echo "-m, --m2h-opt <\"options\">   Quoted list of man2html options"
+    echo "                            (See man2html(1) for more information)"
+    echo "                            (Overrides bm2h.conf m2h_opt setting)"
     echo "-p, --pretend               Do everything except generating html"
-    echo "-t, --html-type <type>      Overrides bm2h.conf html_type setting"
-    echo "-m, --m2h-opt \"<options>\"   Quoted list of options for man2html"
-    echo "                            See man2html(1) for more information"
+    echo "-s, --skip                  Toggle skip/overwrite destination files"
+    echo "                            (Reverses bm2h.conf skip setting)"
+    echo "-t, --html-type <type>      Choose destination file suffix"
+    echo "                            (Overrides bm2h.conf html_type setting)"
+    echo "-v, --verbose               Toggle verbose mode"
+    echo "                            (Reverses bm2h.conf verbose setting)"
     echo ""
-    echo "No arguments, source directory, or source and destination directory accepted."
+    echo "No arguments, source directory, or source and destination directory"
+    echo "accepted"
     echo ""
 }
 
@@ -34,7 +41,7 @@ error() {
 
 version() {
     local scrname="bm2h"
-    local scrver="0.5"
+    local scrver="0.6"
     local scrauth="Marcus Hoffren"
     local authnick="dMG/Up Rough"
     local scrcontact="marcus.hoffren@gmail.com"
@@ -50,7 +57,7 @@ version() {
 
 # Void
 sanity() {
-    [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m."
+    [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
     [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
@@ -75,7 +82,8 @@ verbose_mode() {
 
 # Accept any. Return $src_dirs $dst_dirs
 args() {
-    getopt_arg=$(getopt -o "Vhasvpt:m:" -l "version,help,generate-stub,automatic,verbose,pretend,html-type:m2h-opt:" \
+    getopt_arg=$(getopt -o "Vhagvpst:m:" \
+			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
 			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
     eval set -- "${getopt_arg}"
     while (( ${#} > 0 )); do
@@ -87,7 +95,7 @@ args() {
 	    -a|--automatic)
 				automatic="1"
 				shift;;
-	    -s|--generate-stub)
+	    -g|--generate-stub)
 				(( "${gen_stub}" == "1" )) && gen_stub="0" || gen_stub="1"
 				shift;;
 	    -v|--verbose)
@@ -95,6 +103,9 @@ args() {
 				shift;;
 	    -p|--pretend)
 				pretend="1"
+				shift;;
+	    -s|--skip)
+				(( "${skip}" == "1" )) && skip="0" || skip="1"
 				shift;;
 	    -t|--html-type)
 				[[ -n "${2}" ]] && html_type="${2}"
@@ -150,35 +161,51 @@ files_array() {
     done
 }
 
-# Accept $src_files. Return void
 convert() {
+    [[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
+}
+
+skip_stub() {
+    case ${gen_stub} in
+	0) # Skip stub manpages
+	    if [[ $(bzcat "${src_files[$i]}") =~ ^.so ]]; then
+		verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
+	    else
+		verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
+		convert "${src_files}" "${dst_files}"
+	    fi;;
+	1)
+	    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
+	    convert "${src_files}" "${dst_files}"
+    esac
+}
+
+dupe_check() {
+    if [[ ! -f "${dst_files}" ]]; then
+	skip_stub "${src_files}" "${dst_files}"
+    else
+	if (( "${skip}" == "0" )); then
+	    verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
+	else
+	    skip_stub "${src_files}" "${dst_files}"
+	fi
+    fi
+}
+
+# Accept $src_files. Return $dst_files
+dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
 	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
-	    if [[ ! -f "${dst_files}" ]]; then
-		case ${gen_stub} in
-		    0) # Skip stub manpages
-			if [[ $(bzcat "${src_files[$i]}") =~ ^.so ]]; then
-			    verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
-			else
-			    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-			    [[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
-			fi;;
-		    1)
-			verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-			[[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null;;
-		esac
-	    else
-		 verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
-	    fi
+	    dupe_check "${src_files}" "${dst_files}" # Call the rest of the functions from within the loop
 	done
-	verbose_mode ""
-	verbose_mode "Done!"
-	verbose_mode ""
 }
 
 sanity
 args "${@}"
 make_dirs "${src_dirs}" "${dst_dirs}"
 files_array "${src_dirs}"
-convert "${src_files}"
+dest_files "${src_files}"
+verbose_mode ""
+verbose_mode "Done!"
+verbose_mode ""
