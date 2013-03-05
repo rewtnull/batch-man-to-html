@@ -113,7 +113,7 @@ CONFIGURATION
           commands you have available to your disposal, or which ordinary
           manpages exist on your system.
 
-          Using the command line option -s|--generate-stub will reverse the
+          Using the command line option -g|--generate-stub will reverse the
           value set in bm2h.conf. If the value is set to "1", --generate-stub
           will assume the value to be "0" and vice versa.
 
