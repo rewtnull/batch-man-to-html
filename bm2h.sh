@@ -98,9 +98,9 @@ args() {
 	    -g|--generate-stub)
 				(( "${gen_stub}" == "1" )) && gen_stub="0" || gen_stub="1"
 				shift;;
-	    -v|--verbose)
-				(( "${verbose}" == "1" )) && verbose="0" || verbose="1"
-				shift;;
+	    -m|--m2h-opt)
+				[[ -n "${2}" ]] && m2h_arg="${2}"
+				shift 2;; # Options with arguments need to be shifted twice
 	    -p|--pretend)
 				pretend="1"
 				shift;;
@@ -109,10 +109,10 @@ args() {
 				shift;;
 	    -t|--html-type)
 				[[ -n "${2}" ]] && html_type="${2}"
-				shift 2;; # Options with arguments need to be shifted twice
-	    -m|--m2h-opt)
-				[[ -n "${2}" ]] && m2h_arg="${2}"
 				shift 2;;
+	    -v|--verbose)
+				(( "${verbose}" == "1" )) && verbose="0" || verbose="1"
+				shift;;
 	    --)
 				shift
 				break;;
