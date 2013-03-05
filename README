@@ -176,6 +176,9 @@ HISTORY
                         [+] Added -p|--pretend mode
                         [+] Added -t|--html-type command line option
                         [+] Added -m|--m2h-opt command line option
+        v0.6 (20130305) [*] Now asks if you want to create destination
+                            directory if none is given
+                        [*] Code cleanup
 
 TODO
         - Update destination html's with newer versions/revisions
