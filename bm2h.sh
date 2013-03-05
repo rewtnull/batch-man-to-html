@@ -55,7 +55,7 @@ sanity() {
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
-    [[ ! -d ${src_root} ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
+    [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
     if [[ ! -d "${dst_root}" ]]; then
 	if (( ${#} < 2 )); then
 	    echo -e "${dst_root%/} - Destination directory does not exist."
@@ -88,10 +88,10 @@ args() {
 				automatic="1"
 				shift;;
 	    -s|--generate-stub)
-				(( ${gen_stub} == "1" )) && gen_stub="0" || gen_stub="1"
+				(( "${gen_stub}" == "1" )) && gen_stub="0" || gen_stub="1"
 				shift;;
 	    -v|--verbose)
-				(( ${verbose} == "1" )) && verbose="0" || verbose="1"
+				(( "${verbose}" == "1" )) && verbose="0" || verbose="1"
 				shift;;
 	    -p|--pretend)
 				pretend="1"
