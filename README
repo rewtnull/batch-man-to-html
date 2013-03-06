@@ -141,19 +141,6 @@ CONFIGURATION
           Anyone having GNU getopt on a different path than the one in the default
           setting will have to change this.
 
-          Be adviced that the BSD/OSX specific implementation is found under
-          /usr/bin/getopt, which means that the default path would be
-          conflicing with the default linux path.
-
-          This can be fixed in one of two ways:
-
-          - Installing GNU getopt in an alternative path, such as /opt and
-            changing the script getopt_path to reflect this.
-
-          - Replacing the default getopt with GNU getopt. From what I've read
-            it shouldn't be a proplem since GNU getopt would do everything
-            the default implementation does, but would also add some features.
-
           Default: "/usr/bin/getopt"
 
         - man_dirs is used to expand man* directories under $src_root.
@@ -207,6 +194,19 @@ DEPENDENCIES
         I have however added a getopt_path setting in bm2h.conf as a
         workaround to this problem, and it allows you to point out the
         absolute path to GNU getopt on these systems.
+
+        Be adviced that the BSD/OSX specific implementation is found under
+        /usr/bin/getopt, which means that the default path would be
+        conflicing with the default linux path.
+
+        This can be fixed in one of two ways:
+
+        - Installing GNU getopt in an alternative path, such as /opt and
+          changing the script getopt_path to reflect this.
+
+        - Replacing the default getopt with GNU getopt. From what I've read
+          it shouldn't be a proplem since GNU getopt would do everything
+          the default implementation does, but would also add some features.
 
 HISTORY
         LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
