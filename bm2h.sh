@@ -65,10 +65,10 @@ verbose_mode() {
     esac
 }
 
-# Accept $1. Return ${src_dirs[@]}
+# Accept $1, $2. Return ${src_dirs[@]}
 src_check() {
     [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
+    src_dirs=( $(echo "${1%/}${2%/}") )
     [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
 }
 
@@ -99,11 +99,11 @@ arg_check() {
 		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
 	    esac;;
 	1)
-	    src_check "${1}"
+	    src_check "${1}" "${man_dirs}"
 	    dst_dirs=( $(echo "${dst_root%/}") )
 	    dst_check "${dst_dirs}";;
 	2)
-	    src_check "${1}"
+	    src_check "${1}" "${man_dirs}"
 	    dst_dirs=( $(echo "${2%/}") )
 	    dst_check "${dst_dirs}";;
 	*)
