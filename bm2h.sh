@@ -68,15 +68,15 @@ verbose_mode() {
 # Accept $1, $2. Return void
 dir_check() {
     [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-	if [[ ! -d "${2}" ]]; then
-	    echo -e "${2%/} - Destination directory does not exist."
-	    read -p "Do you want it to be created? [y/N]"
-	    if [[ "${REPLY}" == "y" ]]; then
-		[[ "${pretend}" != "1" ]] && mkdir ${2%/}
-	    else
-		exit 1
-	    fi
+    if [[ ! -d "${2}" ]]; then
+	echo -e "${2%/} - Destination directory does not exist."
+	read -p "Do you want it to be created? [y/N]"
+	if [[ "${REPLY}" == "y" ]]; then
+	    [[ "${pretend}" != "1" ]] && mkdir ${2%/}
+	else
+	    exit 1
 	fi
+    fi
 }
 
 # Accept any. Return ${src_dirs[@]} ${dst_dirs[@]}
@@ -149,7 +149,7 @@ args() {
 
 # Accept $1, $2. Return void
 convert() {
-    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html ${m2h_opt} > "${2}" 2>/dev/null
+    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${m2h_opt}" > "${2}" 2>/dev/null
 }
 
 # Accept $1, $2. Return $1, $2
@@ -209,7 +209,8 @@ source_files() {
 # Accept void. Return $dst_files
 dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
-	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
+	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
+#	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
 	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
 	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
 	done
