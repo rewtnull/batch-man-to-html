@@ -65,44 +65,47 @@ verbose_mode() {
     esac
 }
 
-# Accept $1, $2. Return void
-dir_check() {
+# Accept $1. Return ${src_dirs[@]}
+src_check() {
     [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-    if [[ ! -d "${2}" ]]; then
-	echo -e "${2%/} - Destination directory does not exist."
+    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
+    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
+}
+
+# Accept $1, $2. Return void
+dst_check() {
+    if [[ ! -d "${1}" ]]; then
+	echo -e "${1%/} - Destination directory does not exist."
 	read -p "Do you want it to be created? [y/N]"
 	if [[ "${REPLY}" == "y" ]]; then
-	    [[ "${pretend}" != "1" ]] && mkdir ${2%/}
+	    [[ "${pretend}" != "1" ]] && mkdir ${1%/}
 	else
 	    exit 1
 	fi
     fi
 }
 
-# Accept any. Return ${src_dirs[@]} ${dst_dirs[@]}
+# Accept any. Return ${dst_dirs[@]}
 arg_check() {
     case ${#} in
 	0)
 	    case ${automatic} in
 		1)
 		    src_dirs=( $(echo "${src_root%/}${man_dirs%/}") )
+		    [[ ! -d "${src_dirs}" ]] && error "${src_dirs%/} - Source directory does not exist."
 		    dst_dirs=( $(echo "${dst_root%/}") )
-		    dir_check "${src_dirs}" "${dst_dirs}";;
+		    dst_check "${dst_dirs}";;
 		*)
 		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
 	    esac;;
 	1)
-	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
+	    src_check "${1}"
 	    dst_dirs=( $(echo "${dst_root%/}") )
-	    dir_check "${src_dirs}" "${dst_dirs}";;
+	    dst_check "${dst_dirs}";;
 	2)
-	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
+	    src_check "${1}"
 	    dst_dirs=( $(echo "${2%/}") )
-	    dir_check "${src_dirs}" "${dst_dirs}";;
+	    dst_check "${dst_dirs}";;
 	*)
 	    error "${0##*/} - Wrong number of arguments.";;
     esac
