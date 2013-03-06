@@ -87,7 +87,7 @@ dst_check() {
     fi
 }
 
-# arg_check($@ => ${dst_dirs[@]})
+# arg_check($@ => ${src_dirs[@]}, ${dst_dirs[@]})
 arg_check() {
     case ${#} in
 	0)
