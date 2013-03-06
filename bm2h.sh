@@ -121,7 +121,7 @@ num_opt() {
 # args($@ => $@)
 args() {
     opt_test=([0]="0" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="0")
-    getopt_arg=$(getopt -o "Vhagvpst:m:" \
+    getopt_arg=$(${getopt_path} -o "Vhagvpst:m:" \
 			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
 			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
     eval set -- "${getopt_arg}"
