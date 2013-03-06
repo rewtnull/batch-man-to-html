@@ -188,7 +188,7 @@ dupe_check() {
 
 # Void
 sanity() {
-    [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
+    [[ "${BASH_VERSION}" < 4.1 ]] && error "${0##*/} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
     [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
     [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
