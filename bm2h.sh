@@ -212,7 +212,7 @@ dupe_check() {
 sanity() {
     [[ "${BASH_VERSION}" < 4.1 ]] && error "${0##*/} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
     [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
-    [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
+    [[ $(type -p ${getopt_path}) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
     [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
     [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
