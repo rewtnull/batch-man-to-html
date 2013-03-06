@@ -8,6 +8,7 @@
 # There is NO WARRANTY, to the extent permitted by law.
 #
 
+# usage(void)
 usage() {
     echo "Usage: ${0##*/} [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]"
     echo ""
@@ -36,6 +37,7 @@ usage() {
     echo ""
 }
 
+# version(void)
 version() {
     local scrname="Batch Man to Html"
     local scrver="0.7"
@@ -52,12 +54,12 @@ version() {
     echo ""
 }
 
-# Accept any. Exit
+# error($@ => exit)
 error() {
     { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
-# Accept any. Return any
+# verbose_mode($@ => $@)
 verbose_mode() {
     case ${verbose} in
 	0) echo -e "${@}" 1> /dev/null;;
@@ -65,14 +67,14 @@ verbose_mode() {
     esac
 }
 
-# Accept $1, $2. Return ${src_dirs[@]}
+# src_check($1, $2 => ${src_dirs[@]})
 src_check() {
     [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
     src_dirs=( $(echo "${1%/}${2%/}") )
     [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
 }
 
-# Accept $1, $2. Return void
+# dst_check($1, $2 => void)
 dst_check() {
     if [[ ! -d "${1}" ]]; then
 	echo -e "${1%/} - Destination directory does not exist."
@@ -85,7 +87,7 @@ dst_check() {
     fi
 }
 
-# Accept any. Return ${dst_dirs[@]}
+# arg_check($@ => ${dst_dirs[@]})
 arg_check() {
     case ${#} in
 	0)
@@ -111,7 +113,7 @@ arg_check() {
     esac
 }
 
-# Accept any. Return any
+# args($@ => $@)
 args() {
     getopt_arg=$(getopt -o "Vhagvpst:m:" \
 			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
@@ -152,12 +154,12 @@ args() {
     arg_check "${@}"
 }
 
-# Accept $1, $2. Return void
+# convert($1, $2 => void)
 convert() {
     [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${m2h_opt}" > "${2}" 2>/dev/null
 }
 
-# Accept $1, $2. Return $1, $2
+# skip_stub($1, $2 => $1, $2)
 skip_stub() {
     case ${gen_stub} in
 	0) # Skip stub manpages
@@ -173,7 +175,7 @@ skip_stub() {
     esac
 }
 
-# Accept $1, $2. Return $1, $2
+# dupe_check($1, $2 => $1, $2)
 dupe_check() {
     if [[ ! -f "${2}" ]]; then
 	skip_stub "${1}" "${2}"
@@ -186,7 +188,7 @@ dupe_check() {
     fi
 }
 
-# Void
+# sanity(void)
 sanity() {
     [[ "${BASH_VERSION}" < 4.1 ]] && error "${0##*/} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
     [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
@@ -196,7 +198,7 @@ sanity() {
     [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
 }
 
-# Void
+# make_dirs(void)
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
 	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] &&
@@ -204,14 +206,14 @@ make_dirs() {
     done
 }
 
-# Accept void. Return ${src_files[@]}
+# source_files(void => ${src_files[@]})
 source_files() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
 	src_files+=( $(echo "${src_dirs[$i]}/*.${comp_type}") ) # Populate array with /path/to/filenames
     done
 }
 
-# Accept void. Return $dst_files
+# dest_files(void => $dst_files)
 dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
