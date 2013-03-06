@@ -210,7 +210,6 @@ source_files() {
 dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
-#	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
 	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
 	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
 	done
