@@ -18,27 +18,22 @@ usage() {
     echo ""
     echo "-a, --automatic             Automatic mode using bm2h.conf settings"
     echo "-g, --generate-stub         Toggle generate stub html pages"
-    echo "                            (Reverses bm2h.conf gen_stub setting)"
+    echo "                            * Reverses bm2h.conf gen_stub setting"
     echo "-m, --m2h-opt <\"options\">   Quoted list of man2html options"
     echo "                            See man2html(1) for more information"
-    echo "                            (Overrides bm2h.conf m2h_opt setting)"
+    echo "                            * Overrides bm2h.conf m2h_opt setting"
     echo "-p, --pretend               Do everything except creating directories"
     echo "                            and generating html"
-    echo "                            (Reverses bm2h.conf pretend setting)"
     echo "-s, --skip                  Toggle skip/overwrite destination files"
-    echo "                            (Reverses bm2h.conf skip setting)"
+    echo "                            * Reverses bm2h.conf skip setting"
     echo "-t, --html-type <type>      Choose destination file suffix"
-    echo "                            (Overrides bm2h.conf html_type setting)"
+    echo "                            * Overrides bm2h.conf html_type setting"
     echo "-v, --verbose               Toggle verbose mode"
-    echo "                            (Reverses bm2h.conf verbose setting)"
+    echo "                            * Reverses bm2h.conf verbose setting"
     echo ""
     echo "No arguments, source directory, or source and destination directory"
     echo "accepted"
     echo ""
-}
-
-error() {
-    { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
 version() {
@@ -57,25 +52,9 @@ version() {
     echo ""
 }
 
-# Void
-sanity() {
-    [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
-    [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
-    [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
-    [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
-    [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
-    [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
-    if [[ ! -d "${dst_root}" ]]; then
-	if (( ${#} != 0 || ${#} != 1 )); then
-	    echo -e "${dst_root%/} - Destination directory does not exist."
-	    read -p "Do you want it to be created? [y/N]"
-	    if [[ "${REPLY}" == "y" ]]; then
-		[[ "${pretend}" != "1" ]] && mkdir ${dst_root%/}
-	    else
-		exit 1
-	    fi
-	fi
-    fi
+# Accept any. Exit
+error() {
+    { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
 # Accept any. Return any
@@ -86,7 +65,48 @@ verbose_mode() {
     esac
 }
 
-# Accept any. Return $src_dirs $dst_dirs
+# Accept $1, $2. Return void
+dir_check() {
+    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
+	if [[ ! -d "${2}" ]]; then
+	    echo -e "${2%/} - Destination directory does not exist."
+	    read -p "Do you want it to be created? [y/N]"
+	    if [[ "${REPLY}" == "y" ]]; then
+		[[ "${pretend}" != "1" ]] && mkdir ${2%/}
+	    else
+		exit 1
+	    fi
+	fi
+}
+
+# Accept any. Return ${src_dirs[@]} ${dst_dirs[@]}
+arg_check() {
+    case ${#} in
+	0)
+	    case ${automatic} in
+		1)
+		    src_dirs=( $(echo "${src_root%/}${man_dirs%/}") )
+		    dst_dirs=( $(echo "${dst_root%/}") )
+		    dir_check "${src_dirs}" "${dst_dirs}";;
+		*)
+		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
+	    esac;;
+	1)
+	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
+	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
+	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
+	    dst_dirs=( $(echo "${dst_root%/}") )
+	    dir_check "${src_dirs}" "${dst_dirs}";;
+	2)
+	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
+	    dst_dirs=( $(echo "${2%/}") )
+	    dir_check "${src_dirs}" "${dst_dirs}";;
+	*)
+	    error "${0##*/} - Wrong number of arguments.";;
+    esac
+}
+
+# Accept any. Return any
 args() {
     getopt_arg=$(getopt -o "Vhagvpst:m:" \
 			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
@@ -124,99 +144,82 @@ args() {
 				break;;
 	esac
     done
-    case ${#} in
-	0)
-	    case ${automatic} in
-		1)
-		    src_dirs=( $(echo "${src_root%/}${man_dirs%/}") )
-		    dst_dirs=( $(echo "${dst_root%/}") );;
-		*)
-		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
-	    esac;;
-	1)
-	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
-	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
-	    dst_dirs=( $(echo "${dst_root%/}") );;
-	2)
-	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
-	    dst_dirs=( $(echo "${2%/}") )
-	    if [[ ! -d "${dst_dirs}" ]]; then
-		echo -e "${2%/} - Destination directory does not exist."
-		read -p "Do you want it to be created? [y/N]"
-		if [[ "${REPLY}" == "y" ]]; then
-		    [[ "${pretend}" != "1" ]] && mkdir ${2%/}
-		else
-		    exit 1
-		fi
-	    fi;;
-	*)
-	    error "${0##*/} - Wrong number of arguments.";;
-    esac
-    [[ ! -d "${src_dirs}" ]] && error "${src_dirs%/} - Source directory does not exist."
-    [[ ! -d "${dst_dirs}" ]] && error "${dst_dirs%/} - Destination directory does not exist."
+    arg_check "${@}"
 }
 
-# Accept $src_dirs, $dst_dirs. Return void
+# Accept $1, $2. Return void
+convert() {
+    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html ${m2h_opt} > "${2}" 2>/dev/null
+}
+
+# Accept $1, $2. Return $1, $2
+skip_stub() {
+    case ${gen_stub} in
+	0) # Skip stub manpages
+	    if [[ $(bzcat "${1}") =~ ^.so ]]; then
+		verbose_mode "Skipping stub \033[1m${1##*/}\033[m"
+	    else
+		verbose_mode "Converting ${1} ---> ${2}"
+		convert "${1}" "${2}"
+	    fi;;
+	1)
+	    verbose_mode "Converting ${1} ---> ${2}"
+	    convert "${1}" "${2}"
+    esac
+}
+
+# Accept $1, $2. Return $1, $2
+dupe_check() {
+    if [[ ! -f "${2}" ]]; then
+	skip_stub "${1}" "${2}"
+    else
+	if (( "${skip}" == "1" )); then
+	    verbose_mode "Skipping duplicate \033[1m${1##*/}\033[m"
+	else
+	    skip_stub "${1}" "${2}"
+	fi
+    fi
+}
+
+# Void
+sanity() {
+    [[ "${BASH_VERSION}" < 4.1 ]] && error "${scrname} requires \033[1mbash v4.1 or newer\033[m." # Lexicographic comparison
+    [[ -f bm2h.conf ]] && . bm2h.conf || error "${0##*/} - bm2h.conf is missing!"
+    [[ $(type -p getopt) == "" ]] && error "GNU getopt \033[1mrequired.\033[m"
+    [[ $(type -p bzcat) == "" ]] && error "bzcat (bzip2) \033[1mrequired.\033[m"
+    [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
+    [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
+}
+
+# Void
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	[[ ! -d "${dst_dirs}/${src_dirs[$i]##*/}" ]] && [[ "${pretend}" != "1" ]] &&
-	    mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
+	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] &&
+	[[ "${pretend}" != "1" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
     done
 }
 
-# Accept $src_dirs, return $src_files
-files_array() {
+# Accept void. Return ${src_files[@]}
+source_files() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
 	src_files+=( $(echo "${src_dirs[$i]}/*.${comp_type}") ) # Populate array with /path/to/filenames
     done
 }
 
-convert() {
-    [[ "${pretend}" != "1" ]] && bzcat "${src_files[$i]}" | man2html ${m2h_opt} > "${dst_files}" 2>/dev/null
-}
-
-skip_stub() {
-    case ${gen_stub} in
-	0) # Skip stub manpages
-	    if [[ $(bzcat "${src_files[$i]}") =~ ^.so ]]; then
-		verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
-	    else
-		verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-		convert "${src_files}" "${dst_files}"
-	    fi;;
-	1)
-	    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
-	    convert "${src_files}" "${dst_files}"
-    esac
-}
-
-dupe_check() {
-    if [[ ! -f "${dst_files}" ]]; then
-	skip_stub "${src_files}" "${dst_files}"
-    else
-	if (( "${skip}" == "0" )); then
-	    verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
-	else
-	    skip_stub "${src_files}" "${dst_files}"
-	fi
-    fi
-}
-
-# Accept $src_files. Return $dst_files
+# Accept void. Return $dst_files
 dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files=$(echo "${dst_dirs}${src_files[$i]/${src_root}}") # Strip ${src_root}
 	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
-	    dupe_check "${src_files}" "${dst_files}" # Call the rest of the functions from within the loop
+	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
 	done
 }
 
 sanity
 args "${@}"
-make_dirs "${src_dirs}" "${dst_dirs}"
-files_array "${src_dirs}"
-dest_files "${src_files}"
+make_dirs
+source_files
+dest_files
 verbose_mode ""
 verbose_mode "Done!"
 verbose_mode ""

@@ -18,7 +18,8 @@ DESCRIPTION
 
         Since this script checks if the destination files exist, new manpages
         can be accumulated by by re-running it with the same arguments or
-        bm2h.conf settings.
+        bm2h.conf settings. This means that you may use this as a kind of
+        html formatted manpages farmer.
 
 ARGUMENTS
         -h, --help                  Display this help and exit
@@ -28,19 +29,18 @@ ARGUMENTS
 
         -a, --automatic             Automatic mode using bm2h.conf settings
         -g, --generate-stub         Toggle generate stub html pages
-                                    (Reverses bm2h.conf gen_stub setting)
+                                    * Reverses bm2h.conf gen_stub setting
         -m, --m2h-opt <"options">   Quoted list of man2html options
                                     See man2html(1) for more information
-                                    (Overrides bm2h.conf m2h_opt setting)
+                                    * Overrides bm2h.conf m2h_opt setting
         -p, --pretend               Do everything except creating directories
                                     and generating html
-                                    (Reverses bm2h.conf pretend setting)
         -s, --skip                  Toggle skip/overwrite destination files
-                                    (Reverses bm2h.conf skip setting)
+                                    * Reverses bm2h.conf skip setting
         -t, --html-type <type>      Choose destination file suffix
-                                    (Overrides bm2h.conf html_type setting)
+                                    * Overrides bm2h.conf html_type setting
         -v, --verbose               Toggle verbose mode
-                                    (Reverses bm2h.conf verbose setting)
+                                    * Reverses bm2h.conf verbose setting
 
         No arguments, source directory, or source and destination directory
         accepted
@@ -216,6 +216,9 @@ HISTORY
                             in order to use -s for the new -s|--skip option
         v0.7 (20130306) [!] Fixed bug where --pretend would still create
                             directories
+                        [*] Huge code cleanup. Broken down even more functions
+                            to smaller allround ones and emphatized each
+                            function's accepted arguments
 
 TODO
         - Update destination html's with newer versions/revisions
