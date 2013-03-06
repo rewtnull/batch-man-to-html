@@ -107,8 +107,8 @@ CONFIGURATION
         - Set the default pretend mode.
 
           If set to "0", the script will work in normal mode.
-          If set to "1", the script will do everything besides creating dirs
-          and generating html.
+          If set to "1", the script will do everything besides creating
+          directories and generating html.
 
           Using the command line option -p|--pretend will reverse the value set in
           bm2h.conf. If the value is set to "1", --pretend will assume the
@@ -140,6 +140,19 @@ CONFIGURATION
 
           Anyone having GNU getopt on a different path than the one in the default
           setting will have to change this.
+
+          Be adviced that the BSD/OSX specific implementation is found under
+          /usr/bin/getopt, which means that the default path would be
+          conflicing with the default linux path.
+
+          This can be fixed in one of two ways:
+
+          - Installing GNU getopt in an alternative path, such as /opt and
+            changing the script getopt_path to reflect this.
+
+          - Replacing the default getopt with GNU getopt. From what I've read
+            it shouldn't be a proplem since GNU getopt would do everything
+            the default implementation does, but would also add some features.
 
           Default: "/usr/bin/getopt"
 
