@@ -2,7 +2,7 @@ NAME
         bm2h - Batch man to html
 
 VERSION
-        0.7
+        0.8
 
 SYNOPSIS
         bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
@@ -221,6 +221,7 @@ HISTORY
                             function's accepted arguments
                         [!] Added missed source directory check in arg_check()
                             if two arguments are given
+        v0.8 (20130306) [*] Now checks if an option has been used more than once
 
 TODO
         - Update destination html's with newer versions/revisions

@@ -40,7 +40,7 @@ usage() {
 # version(void)
 version() {
     local scrname="Batch Man to Html"
-    local scrver="0.7"
+    local scrver="0.8"
     local scrauth="Marcus Hoffren"
     local authnick="dMG/Up Rough"
     local scrcontact="marcus.hoffren@gmail.com"
@@ -113,8 +113,14 @@ arg_check() {
     esac
 }
 
+# num_opt($1 => $1)
+num_opt() {
+    [[ ${1} != "0" ]] && error "${0##*/} - Wrong number of options."
+}
+
 # args($@ => $@)
 args() {
+    opt_test=([0]="0" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="0")
     getopt_arg=$(getopt -o "Vhagvpst:m:" \
 			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
 			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
@@ -126,24 +132,38 @@ args() {
 	    -h|--help)
 				{ usage; exit 0; };;
 	    -a|--automatic)
+				num_opt "${opt_test[0]}"
+				opt_test[0]="1"
 				automatic="1"
 				shift;;
 	    -g|--generate-stub)
+				num_opt "${opt_test[1]}"
+				opt_test[1]="1"
 				(( "${gen_stub}" == "1" )) && gen_stub="0" || gen_stub="1"
 				shift;;
 	    -m|--m2h-opt)
+				num_opt "${opt_test[2]}"
+				opt_test[2]="1"
 				[[ -n "${2}" ]] && m2h_arg="${2}"
 				shift 2;; # Options with arguments need to be shifted twice
 	    -p|--pretend)
+				num_opt "${opt_test[3]}"
+				opt_test[3]="1"
 				pretend="1"
 				shift;;
 	    -s|--skip)
+				num_opt "${opt_test[4]}"
+				opt_test[4]="1"
 				(( "${skip}" == "1" )) && skip="0" || skip="1"
 				shift;;
 	    -t|--html-type)
+				num_opt "${opt_test[5]}"
+				opt_test[5]="1"
 				[[ -n "${2}" ]] && html_type="${2}"
 				shift 2;;
 	    -v|--verbose)
+				num_opt "${opt_test[6]}"
+				opt_test[6]="1"
 				(( "${verbose}" == "1" )) && verbose="0" || verbose="1"
 				shift;;
 	    --)
