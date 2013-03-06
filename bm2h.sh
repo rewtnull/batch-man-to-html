@@ -92,13 +92,14 @@ arg_check() {
 		    error "${0##*/} - Expecting either --automatic or path(s) to work with.";;
 	    esac;;
 	1)
-	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
 	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
 	    dst_dirs=( $(echo "${dst_root%/}") )
 	    dir_check "${src_dirs}" "${dst_dirs}";;
 	2)
+	    [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
 	    src_dirs=( $(echo "${1%/}${man_dirs%/}") )
+	    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
 	    dst_dirs=( $(echo "${2%/}") )
 	    dir_check "${src_dirs}" "${dst_dirs}";;
 	*)
