@@ -1,264 +1,265 @@
 NAME
-        bm2h - Batch man to html
+	bm2h - batch man to html
 
 VERSION
-        0.9
+	0.9
 
 SYNOPSIS
-        bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
+	bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
 
 DESCRIPTION
-        Batch unpack and convert manpages to html from source manpage
-        directory to a destination directory.
+	Batch convert manpages to html from a source directory containing
+	manpages to a destination directory.
 
-        bm2h.sh is designed to automate conversion, either by running it with
-        or without command line arguments. If no arguments are given, and
-        --automatic option is used, it will use the default values from
-        bm2h.conf.
+	bm2h.sh is designed to automate conversion, either by running it with
+	or without command line arguments. If no arguments are given, and
+	--automatic option is used, it will use the default values from
+	bm2h.conf.
 
-        Since this script checks if the destination files exist, new manpages
-        can be accumulated by by re-running it with the same arguments or
-        bm2h.conf settings. This means that you may use this as a kind of
-        html formatted manpages farmer.
+	Since this script checks if the destination files exist, new manpages
+	can be accumulated by by re-running it with the same arguments or
+	bm2h.conf settings. This means that you may use this as a kind of
+	html formatted manpages farmer.
 
 ARGUMENTS
-        -h, --help                  Display this help and exit
-        -V, --version               Display version and exit
+	-h, --help			Display this help and exit
+	-V, --version			Display version and exit
 
-        OPTIONS:
+	OPTIONS:
 
-        -a, --automatic             Automatic mode using bm2h.conf settings
-        -g, --generate-stub         Toggle generate stub html pages
-                                    * Reverses bm2h.conf gen_stub setting
-        -m, --m2h-opt <"options">   Quoted list of man2html options
-                                    See man2html(1) for more information
-                                    * Overrides bm2h.conf m2h_opt setting
-        -o, --overwrite             Toggle overwrite/skip destination files
-                                    * Reverses bm2h.conf skip setting
-        -p, --pretend               Do everything except creating directories
-                                    and generating html
-        -t, --html-type <type>      Choose destination file suffix
-                                    * Overrides bm2h.conf html_type setting
-        -v, --verbose               Toggle verbose mode
-                                    * Reverses bm2h.conf verbose setting
+	-a, --automatic			Automatic mode using bm2h.conf settings
+	-g, --generate-stub		Toggle generate stub html pages
+					* Reverses bm2h.conf gen_stub setting
+	-m, --m2h-opt <"options">	Quoted list of man2html options
+					See man2html(1) for more information
+					* Overrides bm2h.conf m2h_opt setting
+	-o, --overwrite			Toggle overwrite/skip destination files
+					* Reverses bm2h.conf skip setting
+	-p, --pretend			Do everything except creating directories
+					and generating html
+	-t, --html-type <type>		Choose destination file suffix
+					* Overrides bm2h.conf html_type setting
+	-v, --verbose			Toggle verbose mode
+					* Reverses bm2h.conf verbose setting
 
-        No arguments, source directory, or source and destination directory
-        accepted
+	No arguments, source directory, or source and destination directory
+	accepted
 
 DEPENDENCIES
-        - Fairly recent version of Bash. Tested with v4.1 only
-        - GNU getopt. This might impose a problem on BSD/OSX systems which
-          use another implementation of getopt. Installing GNU getopt on
-          these systems should take care of it. See notes below.
-        - bzcat, which is a part of the bzip2 package
-        - man2html
+	- Fairly recent version of Bash. Tested with v4.1 only
+	- GNU getopt. This might impose a problem on BSD/OSX systems which
+	    use another implementation of getopt. Installing GNU getopt on
+	    these systems should take care of it, see notes below.
+	- bzcat, which is a part of the bzip2 package
+	- man2html
 
-        bm2h.sh has a built in sanity check and will exit if any of these
-        conditions aren't met.
+	bm2h.sh has a built in sanity check and will exit if any of these
+	conditions aren't met.
 
-        An Exception is getopt, for which I've only had the chance to write
-        a generic check since I haven't had the oportunity to install GNU
-        getopt on a BSD/OSX system.
+	An Exception is getopt, for which I've only had the chance to write
+	a generic check since I haven't had the oportunity to install GNU
+	getopt on a BSD/OSX system.
 
-        I have however added a getopt_path setting in bm2h.conf as a
-        workaround to this problem, and it allows you to point out the
-        absolute path to GNU getopt on these systems.
+	I have however added a getopt_path setting in bm2h.conf as a
+	workaround to this problem, and it allows you to point out the
+	absolute path to GNU getopt on these systems.
 
-        Be adviced that the BSD/OSX specific implementation is found under
-        /usr/bin/getopt, which means that the default path would be
-        conflicing with the default linux path.
+	Be adviced that the BSD/OSX specific implementation is found under
+	/usr/bin/getopt, which means that the default path would be
+	conflicing with the default linux path.
 
-        This can be fixed in one of two ways:
+	This can be fixed in one of two ways:
 
-        - Installing GNU getopt in an alternative path, such as /opt and
-          changing the script getopt_path to reflect this.
+	- Installing GNU getopt in an alternative path, such as /opt and
+	    changing the script getopt_path to reflect this.
 
-        - Replacing the default getopt with GNU getopt. From what I've read
-          it shouldn't be a proplem since GNU getopt would do everything
-          the default implementation does, but would also add some features.
+	- Replacing the default getopt with GNU getopt. From what I've read
+	    it shouldn't be a proplem since GNU getopt would do everything
+	    the default implementation does, but would also add some features.
 
 CONFIGURATION
-        bm2h.conf is to be kept in the same directory as bm2h.sh
+	bm2h.conf is to be kept in the same directory as bm2h.sh
 
-        - Change dst_root
+	- Change dst_root
 
-          dst_root is the destination path if no, or one argument is given.
+	    dst_root is the destination path if no, or one argument is given.
 
-        - Change src_root
+	- Change src_root
 
-          src_root is the source path if no, or one argument is given.
+	    src_root is the source path if no, or one argument is given.
 
-          You only need to change this if your manpage directories are located
-          somewhere else than /usr/share/man.
+	    You only need to change this if your manpage directories are located
+	    somewhere else than /usr/share/man.
 
-          When this path is set, the script expects man* directories to be
-          found right under it unless the man_dirs setting is changed.
+	    When this path is set, the script expects man* directories to be
+	    found right under it unless the man_dirs setting is changed.
 
-        - Optionally set m2h_opt
+	- Optionally set m2h_opt
 
-          Edit your custom man2html options with the m2h_opt setting.
-          See man2html(1) for more information.
+	    Edit your custom man2html options with the m2h_opt setting.
+	    See man2html(1) for more information.
 
-          Using the command line option -m|--m2h-opt will override the
-          value set in bm2h.conf.
+	    Using the command line option -m|--m2h-opt will override the
+	    value set in bm2h.conf.
 
-          Default: "-hq"
+	    Default: "-hq"
 
-        - Optionally set html_type
+	- Optionally set html_type
 
-          With this setting you can change the file suffix of destination
-          html files.
+	    With this setting you can change the file suffix of destination
+	    html files.
 
-          Using the command line option -t|--html-type will override the
-          value set in bm2h.conf.
+	    Using the command line option -t|--html-type will override the
+	    value set in bm2h.conf.
 
-          Default: "html"
+	    Default: "html"
 
-        - Set the default verbose mode.
+	- Set the default verbose mode.
 
-          If set to "0", only error messages will be displayed on STDERR. If set
-          to "1" it will also show conversion progress on STDOUT.
+	    If set to "0", only error messages will be displayed on STDERR. If set
+	    to "1" it will also show conversion progress on STDOUT.
 
-          Using the command line option -v|--verbose will reverse the value set
-          in bm2h.conf. If the value is set to "1", --verbose will assume the
-          value to be "0" and vice versa.
+	    Using the command line option -v|--verbose will reverse the value set
+	    in bm2h.conf. If the value is set to "1", --verbose will assume the
+	    value to be "0" and vice versa.
 
-          Default: "0"
+	    Default: "0"
 
-        - Set the default overwrite mode.
+	- Set the default overwrite mode.
 
-          If set to "0", already existing destination files will be skipped.
-          If set to "1", already existing destination files will be overwritten.
+	    If set to "0", already existing destination files will be skipped.
+	    If set to "1", already existing destination files will be overwritten.
 
-          Using the command line option -o|--overwrite will reverse the value
-          set in bm2h.conf. If the value is set to "1", --overwrite will assume
-          the value to be "0" and vice versa.
+	    Using the command line option -o|--overwrite will reverse the value
+	    set in bm2h.conf. If the value is set to "1", --overwrite will assume
+	    the value to be "0" and vice versa.
 
-          Default: "0"
+	    Default: "0"
 
-        - Set the default pretend mode.
+	- Set the default pretend mode.
 
-          If set to "0", the script will work in normal mode.
-          If set to "1", the script will do everything besides creating
-          directories and generating html.
+	    If set to "0", the script will work in normal mode.
+	    If set to "1", the script will do everything besides creating
+	    directories and generating html.
 
-          Using the command line option -p|--pretend will reverse the value set in
-          bm2h.conf. If the value is set to "1", --pretend will assume the
-          value to be "0" and vice versa.
+	    Using the command line option -p|--pretend will reverse the value
+	    set in bm2h.conf. If the value is set to "1", --pretend will assume
+	    the value to be "0" and vice versa.
 
-          Default: "0"
+	    Default: "0"
 
-        - Optionally set gen_stub
+	- Optionally set gen_stub
 
-          This setting decides whether to generate stub manpages or not.
+	    This setting decides whether to generate stub manpages or not.
 
-          If set to "0", no stub html files will be generated. Set this to "1"
-          if you want to generate stubs.
+	    If set to "0", no stub html files will be generated. Set this to "1"
+	    if you want to generate stubs.
 
-          This is good if you want a fairly complete reference list over
-          commands you have available to your disposal, or which ordinary
-          manpages exist on your system.
+	    This is good if you want a fairly complete reference list over
+	    commands you have available to your disposal, or which ordinary
+	    manpages exist on your system.
 
-          Using the command line option -g|--generate-stub will reverse the
-          value set in bm2h.conf. If the value is set to "1", --generate-stub
-          will assume the value to be "0" and vice versa.
+	    Using the command line option -g|--generate-stub will reverse the
+	    value set in bm2h.conf. If the value is set to "1", --generate-stub
+	    will assume the value to be "0" and vice versa.
 
-          Default: "0"
+	    Default: "0"
 
-        - Set getopt_path
+	- Set getopt_path
 
-          This was added as a workaround for BSD/OSX systems, which use an
-          alternative getopt implementation not fully compatible with GNU getopt.
+	    This was added as a workaround for BSD/OSX systems, which use an
+	    alternative getopt implementation not fully compatible with GNU
+	    getopt.
 
-          Anyone having GNU getopt on a different path than the one in the default
-          setting will have to change this.
+	    Anyone having GNU getopt on a different path than the one in the
+	    default setting will have to change this.
 
-          Default: "/usr/bin/getopt"
+	    Default: "/usr/bin/getopt"
 
-        - man_dirs is used to expand man* directories under $src_root.
+	- man_dirs is used to expand man* directories under $src_root.
 
-          There is no need to change this unless you want to batch convert
-          manpages that are not present under /path/to/man/man*.
-          See man(1) for more information.
+	    There is no need to change this unless you want to batch convert
+	    manpages that are not present under /path/to/man/man*.
+	    See man(1) for more information.
 
-          If you change this, make sure it begins with a /
+	    If you change this, make sure it begins with a /
 
-          Default: "/man*"
+	    Default: "/man*"
 
-        - comp_type should be left untouched for now.
+	- comp_type should be left untouched for now.
 
-          This was added as a stub if there would be systems with manpages
-          that are not bz2 compressed. This script currently explicitly
-          expects bz2 compressed manpages.
+	    This was added as a stub if there would be systems with manpages
+	    that are not bz2 compressed. This script currently explicitly
+	    expects bz2 compressed manpages.
 
-          Default: "bz2"
+	    Default: "bz2"
 
 AUTHOR
-        Written by Marcus Hoffren
+	Written by Marcus Hoffren
 
 REPORTING BUGS
-        Report bm2h.sh bugs to marcus.hoffren@gmail.com
-        Updates of bm2h.sh and other projects of mine can be found at
-        https://github.com/rewtnull?tab=repositories
+	Report bm2h.sh bugs to marcus.hoffren@gmail.com
+	Updates of bm2h.sh and other projects of mine can be found at
+	https://github.com/rewtnull?tab=repositories
 
 COPYRIGHT
-        Copyright © 2013 Marcus Hoffren. License GPLv3+:
-        GNU GPL version 3 or later - http://gnu.org/licenses/gpl.html
+	Copyright © 2013 Marcus Hoffren. License GPLv3+:
+	GNU GPL version 3 or later - http://gnu.org/licenses/gpl.html
 
-        This is free software: you are free to change and redistribute it.
-        There is NO WARRANTY, to the extent permitted by law.
+	This is free software: you are free to change and redistribute it.
+	There is NO WARRANTY, to the extent permitted by law.
 
 
 HISTORY
-        LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
+	LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
 
-        v0.1 (20130224) [+] Initial release
-        v0.2 (20130225) [!] Fixed bug where destination path would break if
-                            ${src_root} was changed
-                        [*] Separated ${html_type} and ${comp_type}. For now,
-                            comp_type shouldn't be touched since the script
-                            relies on bzcat to explicitly unpack bz2
-                            compressed manpages
-        v0.3 (20130302) [+] Added arguments support
-                        [*] Code cleanup/partial rewrite
-                        [!] Fixed bug in bzcat syntax which generated the same
-                            file multiple times
-                        [+] Added to github
-        v0.4 (20130304) [*] Added some sanity checks
-                        [*] More code cleanup
-                        [+] Added command line options support
-                        [+] Added verbose mode. Command line option -v|--verbose
-                            reverses the mh2m.conf verbose setting
-                        [+] Added command line option -s|--generate-stub which
-                            reverses the mh2m.conf gen_stub setting
-        v0.5 (20130304) [*] Redirecting all errors to STDERR
-                        [*] Use -a|--automatic with no arguments to explicitly
-                            use bm2h.conf settings
-                        [+] Added -p|--pretend mode
-                        [+] Added -t|--html-type command line option
-                        [+] Added -m|--m2h-opt command line option
-        v0.6 (20130305) [*] Now asks if you want to create destination
-                            directory if none is given. Which directory to be
-                            created is decided by the dst_root setting
-                        [*] Split convert() to slightly more generic functions
-                        [+] Added -s|--skip command line option
-                        [*] Changed short option -s for --generate-stub to -g
-                            in order to use -s for the new -s|--skip option
-        v0.7 (20130306) [!] Fixed bug where --pretend would still create
-                            directories
-                        [*] Huge code cleanup. Broken down even more functions
-                            to smaller allround ones and emphatized each
-                            function's accepted arguments
-                        [!] Added missed source directory check in arg_check()
-                            if two arguments are given
-        v0.8 (20130306) [*] Now checks if an option has been used more than once
-                        [*] Added workaround getopt_path setting in bm2h.conf to
-                            hopefully circumvent the BSD/OSX getopt
-                            implementation problem
-        v0.9 (20130307) [*] Added skip_stub() and verbose() option checks
-                        [*] Default verbose="0" makes more sense
-                        [*] Changed -s|--skip to -o|--overwrite. Makes more
-                            sense since I wanted skip to be a default behavior
+	v0.1 (20130224) [+] Initial release
+	v0.2 (20130225) [!] Fixed bug where destination path would break if
+			    ${src_root} was changed
+			[*] Separated ${html_type} and ${comp_type}. For now,
+			    comp_type shouldn't be touched since the script
+			    relies on bzcat to explicitly unpack bz2
+			    compressed manpages
+	v0.3 (20130302) [+] Added arguments support
+			[*] Code cleanup/partial rewrite
+			[!] Fixed bug in bzcat syntax which generated the same
+			    file multiple times
+			[+] Added to github
+	v0.4 (20130304) [*] Added some sanity checks
+			[*] More code cleanup
+			[+] Added command line options support
+			[+] Added verbose mode. Command line option -v|--verbose
+			    reverses the mh2m.conf verbose setting
+			[+] Added command line option -s|--generate-stub which
+			    reverses the mh2m.conf gen_stub setting
+	v0.5 (20130304) [*] Redirecting all errors to STDERR
+			[*] Use -a|--automatic with no arguments to explicitly
+			    use bm2h.conf settings
+			[+] Added -p|--pretend mode
+			[+] Added -t|--html-type command line option
+			[+] Added -m|--m2h-opt command line option
+	v0.6 (20130305) [*] Now asks if you want to create destination
+			    directory if none is given. Which directory to be
+			    created is decided by the dst_root setting
+			[*] Split convert() to slightly more generic functions
+			[+] Added -s|--skip command line option
+			[*] Changed short option -s for --generate-stub to -g
+			    in order to use -s for the new -s|--skip option
+	v0.7 (20130306) [!] Fixed bug where --pretend would still create
+			    directories
+			[*] Huge code cleanup. Broken down even more functions
+			    to smaller allround ones and emphatized each
+			    function's accepted arguments
+			[!] Added missed source directory check in arg_check()
+			    if two arguments are given
+	v0.8 (20130306) [*] Now checks if an option has been used more than once
+			[*] Added workaround getopt_path setting in bm2h.conf to
+			    hopefully circumvent the BSD/OSX getopt
+			    implementation problem
+	v0.9 (20130307) [*] Added skip_stub() and verbose() option checks
+			[*] Default verbose="0" makes more sense
+			[*] Changed -s|--skip to -o|--overwrite. Makes more
+			    sense since I wanted skip to be a default behavior
 TODO
-        - Update destination html's with newer versions/revisions
-        - Change compression type
+	- Update destination html's with newer versions/revisions
+	- Change compression type
