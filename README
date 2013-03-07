@@ -33,10 +33,10 @@ ARGUMENTS
         -m, --m2h-opt <"options">   Quoted list of man2html options
                                     See man2html(1) for more information
                                     * Overrides bm2h.conf m2h_opt setting
+        -o, --overwrite             Toggle overwrite/skip destination files
+                                    * Reverses bm2h.conf skip setting
         -p, --pretend               Do everything except creating directories
                                     and generating html
-        -s, --skip                  Toggle skip/overwrite destination files
-                                    * Reverses bm2h.conf skip setting
         -t, --html-type <type>      Choose destination file suffix
                                     * Overrides bm2h.conf html_type setting
         -v, --verbose               Toggle verbose mode
