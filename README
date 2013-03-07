@@ -102,7 +102,7 @@ CONFIGURATION
           set in bm2h.conf. If the value is set to "1", --overwrite will assume
           the value to be "0" and vice versa.
 
-          Default: "1"
+          Default: "0"
 
         - Set the default pretend mode.
 
