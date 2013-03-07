@@ -174,9 +174,9 @@ args() {
     arg_check "${@}"
 }
 
-# convert($1, $2 => void)
+# convert($1, $2, $3 => void)
 convert() {
-    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${m2h_opt}" > "${2}" 2>/dev/null
+    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${3}" > "${2}" 2>/dev/null
 }
 
 # skip_stub($1, $2 => $1, $2)
@@ -187,11 +187,11 @@ skip_stub() {
 		verbose_mode "Skipping stub \033[1m${1##*/}\033[m"
 	    else
 		verbose_mode "Converting ${1} ---> ${2}"
-		convert "${1}" "${2}"
+		convert "${1}" "${2}" "${m2h_opt}"
 	    fi;;
 	1)
 	    verbose_mode "Converting ${1} ---> ${2}"
-	    convert "${1}" "${2}"
+	    convert "${1}" "${2}" "${m2h_opt}"
     esac
 }
 
