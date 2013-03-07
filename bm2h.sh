@@ -23,10 +23,10 @@ usage() {
     echo "-m, --m2h-opt <\"options\">   Quoted list of man2html options"
     echo "                            See man2html(1) for more information"
     echo "                            * Overrides bm2h.conf m2h_opt setting"
+    echo "-o, --overwrite             Toggle overwrite/skip destination files"
+    echo "                            * Reverses bm2h.conf skip setting"
     echo "-p, --pretend               Do everything except creating directories"
     echo "                            and generating html"
-    echo "-s, --skip                  Toggle skip/overwrite destination files"
-    echo "                            * Reverses bm2h.conf skip setting"
     echo "-t, --html-type <type>      Choose destination file suffix"
     echo "                            * Overrides bm2h.conf html_type setting"
     echo "-v, --verbose               Toggle verbose mode"
@@ -40,7 +40,7 @@ usage() {
 # version(void)
 version() {
     local scrname="Batch Man to Html"
-    local scrver="0.8"
+    local scrver="0.9"
     local scrauth="Marcus Hoffren"
     local authnick="dMG/Up Rough"
     local scrcontact="marcus.hoffren@gmail.com"
@@ -59,11 +59,12 @@ error() {
     { echo -e "${@}" 1>&2; usage; exit 1; }
 }
 
-# verbose_mode($@ => $@)
+# verbose_mode($@ => void)
 verbose_mode() {
     case ${verbose} in
 	0) echo -e "${@}" 1> /dev/null;;
 	1) echo -e "${@}";;
+	*) error "bm2h.conf - verbose: Invalid option: \"${verbose}\".";;
     esac
 }
 
@@ -71,7 +72,7 @@ verbose_mode() {
 src_check() {
     [[ ! -d "${1}" ]] && error "${1%/} - Source directory does not exist."
     src_dirs=( $(echo "${1%/}${2%/}") )
-    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}"
+    [[ ! -d "${src_dirs}" ]] && error "No man directories found under ${src_dirs%/}."
 }
 
 # dst_check($1, $2 => void)
@@ -113,7 +114,7 @@ arg_check() {
     esac
 }
 
-# num_opt($1 => $1)
+# num_opt($1 => void)
 num_opt() {
     [[ ${1} != "0" ]] && error "${0##*/} - Wrong number of options."
 }
@@ -121,8 +122,8 @@ num_opt() {
 # args($@ => $@)
 args() {
     opt_test=([0]="0" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="0")
-    getopt_arg=$(${getopt_path} -o "Vhagvpst:m:" \
-			-l "version,help,generate-stub,automatic,verbose,skip,pretend,html-type:m2h-opt:" \
+    getopt_arg=$(${getopt_path} -o "Vhagvpot:m:" \
+			-l "version,help,generate-stub,automatic,verbose,overwrite,pretend,html-type:m2h-opt:" \
 			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
     eval set -- "${getopt_arg}"
     while (( ${#} > 0 )); do
@@ -151,10 +152,10 @@ args() {
 				opt_test[3]="1"
 				pretend="1"
 				shift;;
-	    -s|--skip)
+	    -o|--overwrite)
 				num_opt "${opt_test[4]}"
 				opt_test[4]="1"
-				(( "${skip}" == "1" )) && skip="0" || skip="1"
+				(( "${overwrite}" == "1" )) && overwrite="0" || overwrite="1"
 				shift;;
 	    -t|--html-type)
 				num_opt "${opt_test[5]}"
@@ -172,11 +173,12 @@ args() {
 	esac
     done
     arg_check "${@}"
+    make_dirs
 }
 
 # convert($1, $2, $3 => void)
 convert() {
-    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${3}" > "${2}" 2>/dev/null
+    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${2}" > "${3}" 2>/dev/null
 }
 
 # skip_stub($1, $2 => $1, $2)
@@ -187,11 +189,13 @@ skip_stub() {
 		verbose_mode "Skipping stub \033[1m${1##*/}\033[m"
 	    else
 		verbose_mode "Converting ${1} ---> ${2}"
-		convert "${1}" "${2}" "${m2h_opt}"
+		convert "${1}" "${m2h_opt}" "${2}" 
 	    fi;;
 	1)
 	    verbose_mode "Converting ${1} ---> ${2}"
-	    convert "${1}" "${2}" "${m2h_opt}"
+	    convert "${1}" "${m2h_opt}" "${2}";;
+	*)
+	    error "bm2h.conf - gen_stub: Invalid option: \"${gen_stub}\".";;
     esac
 }
 
@@ -200,12 +204,39 @@ dupe_check() {
     if [[ ! -f "${2}" ]]; then
 	skip_stub "${1}" "${2}"
     else
-	if (( "${skip}" == "1" )); then
+	if (( "${overwrite}" == "0" )); then
 	    verbose_mode "Skipping duplicate \033[1m${1##*/}\033[m"
 	else
-	    skip_stub "${1}" "${2}"
+	    skip_stub "${1}" "${2}";
 	fi
     fi
+}
+
+
+# dest_files($1 => $dst_files)
+dest_files() {
+	for (( i = 0; i < ${#src_files[@]}; i++ )); do
+	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
+	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
+	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
+	done
+}
+
+# source_files(void => ${src_files[@]})
+source_files() {
+    for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
+	src_files+=( $(echo "${src_dirs[$i]}/*.${comp_type}") ) # Populate array with /path/to/filenames
+    done
+    dest_files
+}
+
+# make_dirs(void)
+make_dirs() {
+    for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
+	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] &&
+	[[ "${pretend}" != "1" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
+    done
+    source_files
 }
 
 # sanity(void)
@@ -218,35 +249,10 @@ sanity() {
     [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
 }
 
-# make_dirs(void)
-make_dirs() {
-    for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] &&
-	[[ "${pretend}" != "1" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
-    done
-}
-
-# source_files(void => ${src_files[@]})
-source_files() {
-    for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
-	src_files+=( $(echo "${src_dirs[$i]}/*.${comp_type}") ) # Populate array with /path/to/filenames
-    done
-}
-
-# dest_files(void => $dst_files)
-dest_files() {
-	for (( i = 0; i < ${#src_files[@]}; i++ )); do
-	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
-	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
-	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
-	done
-}
 
 sanity
 args "${@}"
-make_dirs
-source_files
-dest_files
+
 verbose_mode ""
 verbose_mode "Done!"
 verbose_mode ""

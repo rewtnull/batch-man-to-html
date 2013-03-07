@@ -2,7 +2,7 @@ NAME
         bm2h - Batch man to html
 
 VERSION
-        0.8
+        0.9
 
 SYNOPSIS
         bm2h.sh [-h|--help] [-v|--version] [OPTIONS <arg>] [src] [[src] [dest]]
@@ -70,7 +70,7 @@ CONFIGURATION
           Using the command line option -m|--m2h-opt will override the
           value set in bm2h.conf.
 
-          Default: ""
+          Default: "-hq"
 
         - Optionally set html_type
 
@@ -91,16 +91,16 @@ CONFIGURATION
           in bm2h.conf. If the value is set to "1", --verbose will assume the
           value to be "0" and vice versa.
 
-          Default: "1"
+          Default: "0"
 
-        - Set the default skip mode.
+        - Set the default overwrite mode.
 
-          If set to "0", already existing destination files will be overwritten.
-          If set to "1", already existing destination files will be skipped.
+          If set to "0", already existing destination files will be skipped.
+          If set to "1", already existing destination files will be overwritten.
 
-          Using the command line option -s|--skip will reverse the value set in
-          bm2h.conf. If the value is set to "1", --skip will assume the
-          value to be "0" and vice versa.
+          Using the command line option -o|--overwrite will reverse the value
+          set in bm2h.conf. If the value is set to "1", --overwrite will assume
+          the value to be "0" and vice versa.
 
           Default: "1"
 
@@ -223,14 +223,14 @@ HISTORY
                         [!] Fixed bug in bzcat syntax which generated the same
                             file multiple times
                         [+] Added to github
-        v0.4 (20130304) [+] Added some sanity checks
+        v0.4 (20130304) [*] Added some sanity checks
                         [*] More code cleanup
                         [+] Added command line options support
                         [+] Added verbose mode. Command line option -v|--verbose
                             reverses the mh2m.conf verbose setting
                         [+] Added command line option -s|--generate-stub which
                             reverses the mh2m.conf gen_stub setting
-        v0.5 (20130304) [+] Redirecting all errors to STDERR
+        v0.5 (20130304) [*] Redirecting all errors to STDERR
                         [*] Use -a|--automatic with no arguments to explicitly
                             use bm2h.conf settings
                         [+] Added -p|--pretend mode
@@ -254,7 +254,10 @@ HISTORY
                         [*] Added workaround getopt_path setting in bm2h.conf to
                             hopefully circumvent the BSD/OSX getopt
                             implementation problem
-
+        v0.9 (20130307) [*] Added skip_stub() and verbose() option checks
+                        [*] Default verbose="0" makes more sense
+                        [*] Changed -s|--skip to -o|--overwrite. Makes more
+                            sense since I wanted skip to be a default behavior
 TODO
         - Update destination html's with newer versions/revisions
         - Change compression type
