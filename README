@@ -45,6 +45,38 @@ ARGUMENTS
         No arguments, source directory, or source and destination directory
         accepted
 
+DEPENDENCIES
+        - Fairly recent version of Bash. Tested with v4.1 only
+        - GNU getopt. This might impose a problem on BSD/OSX systems which
+          use another implementation of getopt. Installing GNU getopt on
+          these systems should take care of it. See notes below.
+        - bzcat, which is a part of the bzip2 package
+        - man2html
+
+        bm2h.sh has a built in sanity check and will exit if any of these
+        conditions aren't met.
+
+        An Exception is getopt, for which I've only had the chance to write
+        a generic check since I haven't had the oportunity to install GNU
+        getopt on a BSD/OSX system.
+
+        I have however added a getopt_path setting in bm2h.conf as a
+        workaround to this problem, and it allows you to point out the
+        absolute path to GNU getopt on these systems.
+
+        Be adviced that the BSD/OSX specific implementation is found under
+        /usr/bin/getopt, which means that the default path would be
+        conflicing with the default linux path.
+
+        This can be fixed in one of two ways:
+
+        - Installing GNU getopt in an alternative path, such as /opt and
+          changing the script getopt_path to reflect this.
+
+        - Replacing the default getopt with GNU getopt. From what I've read
+          it shouldn't be a proplem since GNU getopt would do everything
+          the default implementation does, but would also add some features.
+
 CONFIGURATION
         bm2h.conf is to be kept in the same directory as bm2h.sh
 
@@ -176,37 +208,6 @@ COPYRIGHT
         This is free software: you are free to change and redistribute it.
         There is NO WARRANTY, to the extent permitted by law.
 
-DEPENDENCIES
-        - Fairly recent version of Bash. Tested with v4.1 only
-        - GNU getopt. This might impose a problem on BSD/OSX systems which
-          use another implementation of getopt. Installing GNU getopt on
-          these systems should take care of it. See notes below.
-        - bzcat, which is a part of the bzip2 package
-        - man2html
-
-        bm2h.sh has a built in sanity check and will exit if any of these
-        conditions aren't met.
-
-        An Exception is getopt, to which I've only had the chance to write a
-        generic check since I haven't had the oportunity to install GNU
-        getopt on a BSD/OSX system.
-
-        I have however added a getopt_path setting in bm2h.conf as a
-        workaround to this problem, and it allows you to point out the
-        absolute path to GNU getopt on these systems.
-
-        Be adviced that the BSD/OSX specific implementation is found under
-        /usr/bin/getopt, which means that the default path would be
-        conflicing with the default linux path.
-
-        This can be fixed in one of two ways:
-
-        - Installing GNU getopt in an alternative path, such as /opt and
-          changing the script getopt_path to reflect this.
-
-        - Replacing the default getopt with GNU getopt. From what I've read
-          it shouldn't be a proplem since GNU getopt would do everything
-          the default implementation does, but would also add some features.
 
 HISTORY
         LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
