@@ -269,3 +269,4 @@ TODO
 	- Change compression type
 	- Optional manpage system type tagging / separate distribution branching
 	- Fix bug where getopt options are treated as a single string on BSD systems
+	- Quiet mode; not even asking to create destination directories
