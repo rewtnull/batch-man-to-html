@@ -12,9 +12,9 @@ DESCRIPTION
 	manpages to a destination directory.
 
 	bm2h.sh is designed to automate conversion, either by running it with
-	or without command line arguments. If no arguments are given, and
-	--automatic option is used, it will use the default values from
-	bm2h.conf.
+	or without command line arguments. If no arguments are given, and if
+	invoked with the --automatic option, it will use the default values
+	from bm2h.conf.
 
 	Since this script checks if the destination files exist, new manpages
 	can be accumulated by by re-running it with the same arguments or
@@ -209,7 +209,6 @@ COPYRIGHT
 	This is free software: you are free to change and redistribute it.
 	There is NO WARRANTY, to the extent permitted by law.
 
-
 HISTORY
 	LEGEND: [+] Add, [-] Remove, [*] Change, [!] Bugfix
 
@@ -261,5 +260,12 @@ HISTORY
 			[*] Changed -s|--skip to -o|--overwrite. Makes more
 			    sense since I wanted skip to be a default behavior
 TODO
-	- Update destination html's with newer versions/revisions
+	- Update destination html's with newer versions/revisions either by:
+	    a) comparing timestamps (only makes sense if run on the same system)
+	    b) using date string from manpages (better when farming updates to
+		the same tree(s)
+	    c) both
+	- Use $MANPAGE system variable for paths instead of a static one
 	- Change compression type
+	- Optional manpage system type tagging / separate distribution branching
+	- Fix bug where getopt options are treated as a single string on BSD systems

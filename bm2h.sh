@@ -62,7 +62,7 @@ error() {
 # verbose_mode($@ => void)
 verbose_mode() {
     case ${verbose} in
-	0) echo -e "${@}" 1> /dev/null;;
+	0) ;; # silence is golden...
 	1) echo -e "${@}";;
 	*) error "bm2h.conf - verbose: Invalid option: \"${verbose}\".";;
     esac
@@ -122,10 +122,11 @@ num_opt() {
 # args($@ => $@)
 args() {
     opt_test=([0]="0" [1]="0" [2]="0" [3]="0" [4]="0" [5]="0" [6]="0")
-    getopt_arg=$(${getopt_path} -o "Vhagvpot:m:" \
+    getopt_arg=$( ${getopt_path} -o "Vhagvpot:m:" \
 			-l "version,help,generate-stub,automatic,verbose,overwrite,pretend,html-type:m2h-opt:" \
-			-n "${0##*/}" -- "${@}") || { usage; exit 1; }
+			-n "${0##*/}" -- "${@}" ) || { usage; exit 1; }
     eval set -- "${getopt_arg}"
+#    set -- ${getopt_arg}
     while (( ${#} > 0 )); do
 	case "${1}" in
 	    -V|--version)
@@ -178,47 +179,46 @@ args() {
 
 # convert($1, $2, $3 => void)
 convert() {
-    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${2}" > "${3}" 2>/dev/null
+    [[ "${pretend}" != "1" ]] && bzcat "${1}" | man2html "${2}" > "${3}"
 }
 
-# skip_stub($1, $2 => $1, $2)
+# skip_stub(void => $1, $2, $3)
 skip_stub() {
     case ${gen_stub} in
 	0) # Skip stub manpages
-	    if [[ $(bzcat "${1}") =~ ^.so ]]; then
-		verbose_mode "Skipping stub \033[1m${1##*/}\033[m"
+	    if [[ $(bzcat "${src_files[$i]}") =~ ^.so ]]; then
+		verbose_mode "Skipping stub \033[1m${src_files[$i]##*/}\033[m"
 	    else
-		verbose_mode "Converting ${1} ---> ${2}"
-		convert "${1}" "${m2h_opt}" "${2}" 
+		verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
+		convert "${src_files[$i]}" "${m2h_opt}" "${dst_files}"
 	    fi;;
 	1)
-	    verbose_mode "Converting ${1} ---> ${2}"
-	    convert "${1}" "${m2h_opt}" "${2}";;
+	    verbose_mode "Converting ${src_files[$i]} ---> ${dst_files}"
+	    convert "${src_files[$i]}" "${m2h_opt}" "${dst_files}";;
 	*)
 	    error "bm2h.conf - gen_stub: Invalid option: \"${gen_stub}\".";;
     esac
 }
 
-# dupe_check($1, $2 => $1, $2)
+# dupe_check(void)
 dupe_check() {
-    if [[ ! -f "${2}" ]]; then
-	skip_stub "${1}" "${2}"
+    if [[ ! -f "${dst_files}" ]]; then
+	skip_stub
     else
 	if (( "${overwrite}" == "0" )); then
-	    verbose_mode "Skipping duplicate \033[1m${1##*/}\033[m"
+	    verbose_mode "Skipping duplicate \033[1m${src_files[$i]##*/}\033[m"
 	else
-	    skip_stub "${1}" "${2}";
+	    skip_stub
 	fi
     fi
 }
 
-
-# dest_files($1 => $dst_files)
+# dest_files(void => $dst_files)
 dest_files() {
 	for (( i = 0; i < ${#src_files[@]}; i++ )); do
 	    dst_files="${dst_dirs}${src_files[$i]/${src_root}}" # Strip ${src_root}
 	    dst_files="${dst_files/.${comp_type}/.${html_type}}" # Replace file suffix
-	    dupe_check "${src_files[$i]}" "${dst_files}" # Call the rest of the functions from within the loop
+	    dupe_check  # Call the rest of the functions from within the loop
 	done
 }
 
@@ -234,7 +234,7 @@ source_files() {
 make_dirs() {
     for (( i = 0; i < ${#src_dirs[@]}; i++ )); do
 	[[ ! -d ${dst_dirs}/${src_dirs[$i]##*/} ]] &&
-	[[ "${pretend}" != "1" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}" # Make dirs
+	[[ "${pretend}" != "1" ]] && mkdir "${dst_dirs}/${src_dirs[$i]##*/}"
     done
     source_files
 }
@@ -248,7 +248,6 @@ sanity() {
     [[ $(type -p man2html) == "" ]] && error "man2html \033[1mrequired.\033[m"
     [[ ! -d "${src_root}" ]] && error "${src_root%/} - Directory \033[1mdoes not exist\033[m." # Strip trailing /
 }
-
 
 sanity
 args "${@}"
