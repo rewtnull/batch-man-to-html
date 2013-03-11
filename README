@@ -263,7 +263,7 @@ TODO
 	- Update destination html's with newer versions/revisions either by:
 	    a) comparing timestamps (only makes sense if run on the same system)
 	    b) using date string from manpages (better when farming updates to
-		the same tree(s)
+		the same tree(s) from different systems
 	    c) both
 	- Use $MANPAGE system variable for paths instead of a static one
 	- Change compression type
